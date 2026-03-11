@@ -19,6 +19,8 @@ export const SELECTED_LIGHT_SQUARE_COLOR = "#d4aa5a";
 export const SELECTED_DARK_SQUARE_COLOR = "#b08040";
 export const LAST_MOVE_LIGHT_SQUARE_COLOR = "#c8963c";
 export const LAST_MOVE_DARK_SQUARE_COLOR = "#9a6428";
+export const PREMOVE_LIGHT_SQUARE_COLOR = "#7c82cb";
+export const PREMOVE_DARK_SQUARE_COLOR = "#5d62a7";
 export const BOARD_NAME_LINES = ["JAYANT", "MAHESHWARI"];
 export const BOARD_TEXT_PROPS = {
   font: "/fonts/helvetiker_bold.typeface.json",
@@ -90,7 +92,7 @@ export const LATHE = {
 };
 
 export const LATHE_RADIUS = { P: 0.72, Q: 0.74, K: 0.78 };
-export const PIECE_SCALE = { P: 1.48, N: 1.5, B: 1.56, R: 1.58, Q: 1.78, K: 1.9 };
+export const PIECE_SCALE = { P: 1.48, N: 1.5, B: 1.87, R: 1.254, Q: 1.78, K: 1.9 };
 
 export function squareCenter(index) {
   return OFF + index + 0.5;

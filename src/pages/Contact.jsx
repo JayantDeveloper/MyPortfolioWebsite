@@ -1,3 +1,5 @@
+import useResponsive from '../hooks/useResponsive';
+
 const links = [
   {
     label: 'Email',
@@ -26,17 +28,25 @@ const links = [
 ];
 
 export default function Contact() {
+  const { isMobile } = useResponsive();
+
   return (
     <div style={{ paddingTop: 56 }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '5rem 2rem' }}>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: isMobile ? '4.5rem 1rem 3.5rem' : '6.5rem 2rem 5rem',
+        }}
+      >
         {/* Header */}
-        <div style={{ marginBottom: '4rem' }}>
+        <div style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>
           <div
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.58rem',
-              letterSpacing: '0.25em',
-              color: '#9090b8',
+              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              letterSpacing: '0.15em',
+              color: '#a8a8d0',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
@@ -61,8 +71,8 @@ export default function Contact() {
           <p
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.75rem',
-              color: '#888898',
+              fontSize: isMobile ? '0.92rem' : '1rem',
+              color: '#b4b4c6',
               maxWidth: 480,
               lineHeight: 1.8,
               margin: 0,
@@ -73,14 +83,21 @@ export default function Contact() {
           </p>
         </div>
 
-        <div style={{ borderTop: '1px solid #2a2a2e', marginBottom: '4rem' }} />
+        <div
+          style={{
+            borderTop: '1px solid #2a2a2e',
+            marginBottom: isMobile ? '2rem' : '4rem',
+          }}
+        />
 
         {/* Contact cards */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1rem',
+            gridTemplateColumns: isMobile
+              ? '1fr'
+              : 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: isMobile ? '0.75rem' : '1rem',
             maxWidth: 800,
           }}
         >
@@ -96,7 +113,7 @@ export default function Contact() {
                 background: '#111113',
                 border: '1px solid #2a2a2e',
                 borderRadius: 4,
-                padding: '1.5rem',
+                padding: isMobile ? '1.35rem' : '1.75rem',
                 transition: 'border-color 0.15s, box-shadow 0.15s',
               }}
               onMouseEnter={e => {
@@ -111,9 +128,9 @@ export default function Contact() {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.58rem',
-                  color: '#9090b8',
-                  letterSpacing: '0.2em',
+                  fontSize: isMobile ? '0.72rem' : '0.66rem',
+                  color: '#a8a8d0',
+                  letterSpacing: '0.15em',
                   textTransform: 'uppercase',
                   marginBottom: '0.5rem',
                 }}
@@ -124,8 +141,8 @@ export default function Contact() {
                 style={{
                   fontFamily: 'Inter, sans-serif',
                   fontWeight: 600,
-                  fontSize: '0.82rem',
-                  color: '#dddde8',
+                  fontSize: isMobile ? '0.98rem' : '1rem',
+                  color: '#ececf4',
                   marginBottom: '0.4rem',
                   wordBreak: 'break-all',
                 }}
@@ -135,8 +152,8 @@ export default function Contact() {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.62rem',
-                  color: '#3f3f46',
+                  fontSize: isMobile ? '0.74rem' : '0.72rem',
+                  color: '#6d6d7e',
                 }}
               >
                 {desc}
@@ -148,11 +165,12 @@ export default function Contact() {
         {/* Bottom location note */}
         <div
           style={{
-            marginTop: '5rem',
+            marginTop: isMobile ? '3rem' : '5rem',
             fontFamily: 'Outfit, sans-serif',
-            fontSize: '0.6rem',
+            fontSize: isMobile ? '0.72rem' : '0.72rem',
             color: '#3f3f46',
             letterSpacing: '0.1em',
+            textAlign: isMobile ? 'center' : 'left',
           }}
         >
           Based in College Park, MD · University of Maryland

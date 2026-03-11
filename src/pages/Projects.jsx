@@ -2,21 +2,29 @@ import { useState } from 'react';
 import { projects } from '../data/projects';
 import ProjectTile from '../components/ProjectTile';
 import ProjectModal from '../components/ProjectModal';
+import useResponsive from '../hooks/useResponsive';
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null);
+  const { isMobile } = useResponsive();
 
   return (
     <div style={{ paddingTop: 56 }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '5rem 2rem' }}>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: isMobile ? '4.5rem 1rem 3.5rem' : '6.5rem 2rem 5rem',
+        }}
+      >
         {/* Header */}
-        <div style={{ marginBottom: '3rem' }}>
+        <div style={{ marginBottom: isMobile ? '2.25rem' : '3rem' }}>
           <div
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.58rem',
-              letterSpacing: '0.25em',
-              color: '#9090b8',
+              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              letterSpacing: '0.15em',
+              color: '#a8a8d0',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
@@ -41,23 +49,33 @@ export default function Projects() {
           <p
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.72rem',
-              color: '#888898',
+              fontSize: isMobile ? '0.92rem' : '1rem',
+              color: '#b4b4c6',
               maxWidth: 500,
-              lineHeight: 1.7,
+              lineHeight: 1.8,
               margin: 0,
             }}
           >
-            A collection of tools, games, and systems — many started at hackathons,
-            all built with the goal of making something real.
+            Projects I have worked on for the last few years, including games, web-apps, and scrapers. 
           </p>
         </div>
 
         {/* Thin rule */}
-        <div style={{ borderTop: '1px solid #2a2a2e', marginBottom: '2.5rem' }} />
+        <div
+          style={{
+            borderTop: '1px solid #2a2a2e',
+            marginBottom: isMobile ? '1.75rem' : '2.5rem',
+          }}
+        />
 
         {/* Project tiles */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: isMobile ? '0.75rem' : '1rem',
+          }}
+        >
           {projects.map((project, i) => (
             <ProjectTile
               key={project.id}
@@ -71,11 +89,12 @@ export default function Projects() {
         {/* Footer note */}
         <div
           style={{
-            marginTop: '4rem',
+            marginTop: isMobile ? '3rem' : '4rem',
             fontFamily: 'Outfit, sans-serif',
-            fontSize: '0.6rem',
+            fontSize: isMobile ? '0.72rem' : '0.72rem',
             color: '#3f3f46',
             letterSpacing: '0.1em',
+            textAlign: isMobile ? 'center' : 'left',
           }}
         >
           {projects.length} projects · Click any tile to expand

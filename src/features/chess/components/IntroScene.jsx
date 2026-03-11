@@ -1,6 +1,7 @@
 import { Environment } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
+import useResponsive from "../../../hooks/useResponsive";
 import { BOARD_DEPTH_OFFSET, INIT_FEN } from "../constants";
 import { fenToBoard, pieceColor, pieceType } from "../logic";
 import BoardBase from "./BoardBase";
@@ -10,6 +11,7 @@ import PieceGeometry from "./pieces/PieceGeometry";
 export default function IntroScene() {
   const introBoardRef = useRef(null);
   const introBoard = useMemo(() => fenToBoard(INIT_FEN), []);
+  const { isMobile } = useResponsive();
 
   useFrame((state) => {
     if (introBoardRef.current) {
@@ -27,8 +29,8 @@ export default function IntroScene() {
 
       <group
         ref={introBoardRef}
-        position={[0, -1.4, -BOARD_DEPTH_OFFSET]}
-        rotation={[0.28, 0, 0]}
+        position={[0, isMobile ? -1.6 : -1.4, -(BOARD_DEPTH_OFFSET + (isMobile ? 0.35 : 0))]}
+        rotation={[isMobile ? 0.38 : 0.28, 0, 0]}
       >
         <BoardBase
           getSquareColor={(row, column) =>

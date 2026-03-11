@@ -1,4 +1,8 @@
+import useResponsive from "../../../hooks/useResponsive";
+
 export default function GameOverOverlay({ gameState, onRematch, onMenu }) {
+  const { isMobile } = useResponsive();
+
   if (!gameState || gameState.gameStatus !== "over") {
     return null;
   }
@@ -69,7 +73,16 @@ export default function GameOverOverlay({ gameState, onRematch, onMenu }) {
         {gameState.gameResult}
       </div>
 
-      <div style={{ display: "flex", gap: "1rem" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          width: isMobile ? "100%" : "auto",
+          padding: isMobile ? "0 1rem" : 0,
+        }}
+      >
         <button
           onClick={onRematch}
           style={{
@@ -87,6 +100,8 @@ export default function GameOverOverlay({ gameState, onRematch, onMenu }) {
             boxShadow: "0 4px 20px rgba(200,169,110,.4)",
             transition: "all .2s",
             fontWeight: "bold",
+            width: isMobile ? "100%" : "auto",
+            maxWidth: isMobile ? 280 : "none",
           }}
           onMouseEnter={(event) => {
             event.currentTarget.style.transform = "scale(1.05)";
@@ -112,6 +127,8 @@ export default function GameOverOverlay({ gameState, onRematch, onMenu }) {
             borderRadius: 4,
             cursor: "pointer",
             transition: "all .2s",
+            width: isMobile ? "100%" : "auto",
+            maxWidth: isMobile ? 280 : "none",
           }}
           onMouseEnter={(event) => {
             event.currentTarget.style.borderColor = "rgba(200,169,110,.8)";

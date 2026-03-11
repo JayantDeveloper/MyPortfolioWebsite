@@ -1,9 +1,18 @@
 import { Environment, OrbitControls } from "@react-three/drei";
+import useResponsive from "../../../hooks/useResponsive";
 import CameraRig from "./CameraRig";
 import ChessBoard from "./ChessBoard";
 
-export default function GameScene({ gameState, onSquareClick }) {
-  const { board, turn, playerColor, selected, legalMoves, lastMove, gameStatus } =
+export default function GameScene({
+  gameState,
+  displayBoard,
+  onSquareClick,
+  premoveSelection,
+  premoveLegalMoves,
+  premoveQueue,
+}) {
+  const { isMobile } = useResponsive();
+  const { turn, playerColor, selected, legalMoves, lastMove, gameStatus } =
     gameState;
 
   return (
@@ -26,13 +35,13 @@ export default function GameScene({ gameState, onSquareClick }) {
         enableZoom
         minPolarAngle={Math.PI / 9}
         maxPolarAngle={Math.PI / 2.4}
-        minDistance={6.5}
-        maxDistance={18}
+        minDistance={isMobile ? 7.5 : 6.5}
+        maxDistance={isMobile ? 20 : 18}
         target={[0, 0, 0]}
       />
 
       <ChessBoard
-        board={board}
+        board={displayBoard ?? gameState.board}
         turn={turn}
         playerColor={playerColor}
         selected={selected}
@@ -40,6 +49,9 @@ export default function GameScene({ gameState, onSquareClick }) {
         onSquareClick={onSquareClick}
         lastMove={lastMove}
         gameStatus={gameStatus}
+        premoveSelection={premoveSelection}
+        premoveLegalMoves={premoveLegalMoves}
+        premoveQueue={premoveQueue}
       />
     </>
   );

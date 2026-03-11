@@ -18,6 +18,7 @@ export function createInitialGameState(playerColor) {
     lastMove: null,
     castling: "KQkq",
     enPassant: null,
+    pendingPromotion: null,
     gameStatus: "playing",
     gameResult: null,
     wTime: INIT_TIME,
@@ -74,26 +75,17 @@ export function buildNoMoveGameOver(state) {
   };
 }
 
-export function resolveMoveState(state, from, to) {
-  const { board: nextBoard, enPassant: nextEnPassant } = applyMove(
-    state.board,
-    from,
-    to,
-  );
-  const nextCastling = updateCastlingRights(state.castling, state.board, from, to);
-  const nextTurn = nextPlayer(state.turn);
+function finalizeResolvedState(state, nextBoard, nextTurn) {
   const baseState = {
     ...state,
     board: nextBoard,
     turn: nextTurn,
-    lastMove: { from, to },
-    castling: nextCastling,
-    enPassant: nextEnPassant,
     selected: null,
     legalMoves: [],
+    pendingPromotion: null,
   };
 
-  if (!hasAnyLegalMove(nextBoard, nextTurn, nextCastling, nextEnPassant)) {
+  if (!hasAnyLegalMove(nextBoard, nextTurn, state.castling, state.enPassant)) {
     const inCheck = isInCheck(nextBoard, nextTurn);
     return {
       ...baseState,
@@ -107,4 +99,58 @@ export function resolveMoveState(state, from, to) {
   }
 
   return baseState;
+}
+
+export function queuePromotionState(state, from, to) {
+  const { board: nextBoard, enPassant: nextEnPassant } = applyMove(
+    state.board,
+    from,
+    to,
+    "q",
+    { deferPromotion: true },
+  );
+  const nextCastling = updateCastlingRights(state.castling, state.board, from, to);
+
+  return {
+    ...state,
+    board: nextBoard,
+    lastMove: { from, to },
+    castling: nextCastling,
+    enPassant: nextEnPassant,
+    selected: null,
+    legalMoves: [],
+    pendingPromotion: { from, to, color: state.turn },
+  };
+}
+
+export function resolvePendingPromotionState(state, promotion) {
+  if (!state.pendingPromotion) return state;
+
+  const nextBoard = state.board.map((row) => [...row]);
+  const { to, color } = state.pendingPromotion;
+  const promotedPiece = color === "w" ? promotion.toUpperCase() : promotion.toLowerCase();
+  nextBoard[to[0]][to[1]] = promotedPiece;
+
+  return finalizeResolvedState(state, nextBoard, nextPlayer(state.turn));
+}
+
+export function resolveMoveState(state, from, to, promotion = "q") {
+  const { board: nextBoard, enPassant: nextEnPassant } = applyMove(
+    state.board,
+    from,
+    to,
+    promotion,
+  );
+  const nextCastling = updateCastlingRights(state.castling, state.board, from, to);
+  const nextTurn = nextPlayer(state.turn);
+  return finalizeResolvedState(
+    {
+      ...state,
+      lastMove: { from, to },
+      castling: nextCastling,
+      enPassant: nextEnPassant,
+    },
+    nextBoard,
+    nextTurn,
+  );
 }

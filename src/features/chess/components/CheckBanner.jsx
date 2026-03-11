@@ -24,8 +24,8 @@ export default function CheckBanner({ gameState, inCheck }) {
       }}
     >
       {gameState.turn === gameState.playerColor
-        ? "⚠ You are in check"
-        : "⚠ Bot is in check"}
+        ? "You are in check"
+        : "Bot in check"}
     </div>
   );
 }

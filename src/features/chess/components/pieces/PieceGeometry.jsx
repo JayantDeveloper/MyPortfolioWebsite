@@ -12,6 +12,7 @@ const PieceGeometry = memo(function PieceGeometry({
   position,
   selected = false,
   legalTarget = false,
+  premoved = false,
   interactive = true,
   onClick,
 }) {
@@ -23,12 +24,25 @@ const PieceGeometry = memo(function PieceGeometry({
     ? "#ffaa00"
     : legalTarget
       ? "#44ff88"
+      : premoved
+        ? "#9ca4ff"
       : hovered
         ? "#ffffff"
         : "#000000";
-  const emissiveIntensity = selected ? 0.38 : legalTarget ? 0.26 : hovered ? 0.13 : 0;
+  const emissiveIntensity = selected
+    ? 0.38
+    : legalTarget
+      ? 0.26
+      : premoved
+        ? 0.24
+        : hovered
+          ? 0.13
+          : 0;
   const scale = PIECE_SCALE[type] || 1.3;
   const knightRotationY = color === "w" ? Math.PI : 0;
+  const resolvedPosition = premoved
+    ? [position[0], position[1] + 0.018, position[2]]
+    : position;
 
   let geometry = null;
   if (type === "R") {
@@ -70,7 +84,7 @@ const PieceGeometry = memo(function PieceGeometry({
 
   return (
     <group
-      position={position}
+      position={resolvedPosition}
       scale={[scale, scale, scale]}
       onPointerDown={
         interactive

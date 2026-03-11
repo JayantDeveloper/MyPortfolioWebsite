@@ -1,3 +1,5 @@
+import useResponsive from "../../../hooks/useResponsive";
+
 function formatTime(milliseconds) {
   const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
   const minutes = (totalSeconds / 60) | 0;
@@ -6,12 +8,13 @@ function formatTime(milliseconds) {
 }
 
 export default function Clock({ time, active, label }) {
+  const { isMobile, isCompact } = useResponsive();
   const urgent = time < 30000;
 
   return (
     <div
       style={{
-        fontFamily: '"Palatino Linotype","Book Antiqua",Georgia,serif',
+        fontFamily: 'Inter, sans-serif',
         color: active ? (urgent ? "#ffb2aa" : "#f8ebcf") : "#b49877",
         background: active
           ? urgent
@@ -20,8 +23,8 @@ export default function Clock({ time, active, label }) {
           : "linear-gradient(180deg,rgba(22,14,7,.82),rgba(12,8,4,.82))",
         border: `1px solid ${active ? (urgent ? "#c5584d" : "#b58a54") : "#5a4028"}`,
         borderRadius: 10,
-        padding: "12px 18px 14px",
-        minWidth: 176,
+        padding: isMobile ? "9px 12px 10px" : "12px 18px 14px",
+        minWidth: isCompact ? 112 : isMobile ? 132 : 176,
         textAlign: "left",
         transition: "all .3s",
         boxShadow: active
@@ -32,18 +35,20 @@ export default function Clock({ time, active, label }) {
     >
       <div
         style={{
-          fontSize: ".58rem",
+          fontFamily: 'Outfit, sans-serif',
+          fontSize: isMobile ? ".46rem" : ".58rem",
           letterSpacing: ".28em",
           textTransform: "uppercase",
           opacity: 0.78,
-          marginBottom: 8,
+          marginBottom: isMobile ? 6 : 8,
         }}
       >
         {label}
       </div>
       <div
         style={{
-          fontSize: "1.95rem",
+          fontFamily: 'Inter, sans-serif',
+          fontSize: isCompact ? "1.2rem" : isMobile ? "1.45rem" : "1.95rem",
           lineHeight: 1,
           letterSpacing: ".04em",
           fontWeight: 700,

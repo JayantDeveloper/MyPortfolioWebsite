@@ -1,6 +1,9 @@
 import Clock from "./Clock";
+import useResponsive from "../../../hooks/useResponsive";
 
 export default function GameStatusHud({ gameState }) {
+  const { isMobile } = useResponsive();
+
   if (!gameState || gameState.gameStatus !== "playing") {
     return null;
   }
@@ -9,14 +12,15 @@ export default function GameStatusHud({ gameState }) {
     <div
       style={{
         position: "absolute",
-        top: "50%",
-        left: "1.25rem",
-        transform: "translateY(-50%)",
+        top: isMobile ? 72 : "50%",
+        left: isMobile ? "0.75rem" : "1.25rem",
+        transform: isMobile ? "none" : "translateY(-50%)",
         zIndex: 10,
         display: "flex",
         flexDirection: "column",
-        gap: ".85rem",
+        gap: isMobile ? ".5rem" : ".85rem",
         alignItems: "stretch",
+        maxWidth: isMobile ? 148 : "none",
       }}
     >
       <Clock
@@ -27,10 +31,10 @@ export default function GameStatusHud({ gameState }) {
 
       <div
         style={{
-          fontFamily: '"Palatino Linotype","Book Antiqua",Georgia,serif',
+          fontFamily: 'Outfit, sans-serif',
           color: "#d0ad7b",
-          fontSize: ".72rem",
-          letterSpacing: ".18em",
+          fontSize: isMobile ? ".62rem" : ".72rem",
+          letterSpacing: ".12em",
           textTransform: "uppercase",
           opacity: 0.82,
           textAlign: "left",

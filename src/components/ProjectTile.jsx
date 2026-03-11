@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import useResponsive from '../hooks/useResponsive';
 
 export default function ProjectTile({ project, index, onClick }) {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { isMobile } = useResponsive();
 
   return (
     <div
@@ -10,23 +12,24 @@ export default function ProjectTile({ project, index, onClick }) {
       onClick={onClick}
       style={{
         display: 'flex',
-        background: '#111113',
+        flexDirection: isMobile ? 'column' : 'row',
+        background: '#12111a',
         border: '1px solid #2a2a2e',
         borderRadius: 4,
         overflow: 'hidden',
         cursor: 'pointer',
-        minHeight: 180,
+        minHeight: isMobile ? 'auto' : 180,
       }}
     >
       {/* Left: blurb */}
       <div
         style={{
           flex: 1,
-          padding: '2rem 2rem',
+          padding: isMobile ? '1.25rem' : '2rem 2rem',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          borderRight: '1px solid #2a2a2e',
+          borderRight: isMobile ? 'none' : '1px solid #2a2a2e',
         }}
       >
         {/* Top */}
@@ -35,9 +38,9 @@ export default function ProjectTile({ project, index, onClick }) {
             <span
               style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.6rem',
-                color: '#888898',
-                letterSpacing: '0.15em',
+                fontSize: isMobile ? '0.68rem' : '0.72rem',
+                color: '#9e9eb0',
+                letterSpacing: '0.08em',
               }}
             >
               {String(index + 1).padStart(2, '0')}
@@ -46,7 +49,7 @@ export default function ProjectTile({ project, index, onClick }) {
               <span
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.58rem',
+                  fontSize: isMobile ? '0.68rem' : '0.72rem',
                   color: project.color,
                   opacity: 0.8,
                   letterSpacing: '0.08em',
@@ -57,7 +60,7 @@ export default function ProjectTile({ project, index, onClick }) {
             )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
             {project.logo && (
               <img 
                 src={project.logo} 
@@ -69,7 +72,7 @@ export default function ProjectTile({ project, index, onClick }) {
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 700,
-                fontSize: '1.4rem',
+                fontSize: isMobile ? '1.2rem' : '1.5rem',
                 margin: 0,
                 background: 'linear-gradient(135deg, #c8c8d4 0%, #f0f0f8 40%, #9090a8 60%, #e0e0ec 100%)',
                 WebkitBackgroundClip: 'text',
@@ -84,11 +87,11 @@ export default function ProjectTile({ project, index, onClick }) {
           <p
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.72rem',
-              color: '#888898',
+              fontSize: isMobile ? '0.88rem' : '0.98rem',
+              color: '#b0b0c2',
               margin: '0 0 1rem 0',
-              lineHeight: 1.6,
-              maxWidth: 420,
+              lineHeight: 1.7,
+              maxWidth: isMobile ? '100%' : 420,
             }}
           >
             {project.description}
@@ -96,7 +99,16 @@ export default function ProjectTile({ project, index, onClick }) {
         </div>
 
         {/* Bottom: tags + arrow */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+            flexDirection: isMobile ? 'column' : 'row',
+          }}
+        >
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
             {project.tags.slice(0, 4).map((tag) => (
               <span key={tag} className="tag">{tag}</span>
@@ -105,8 +117,8 @@ export default function ProjectTile({ project, index, onClick }) {
           <span
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.65rem',
-              color: '#9090b8',
+              fontSize: isMobile ? '0.72rem' : '0.8rem',
+              color: '#a8a8d0',
               letterSpacing: '0.1em',
               whiteSpace: 'nowrap',
             }}
@@ -119,14 +131,18 @@ export default function ProjectTile({ project, index, onClick }) {
       {/* Right: thumbnail */}
       <div
         style={{
-          width: '38%',
+          width: isMobile ? '100%' : '38%',
           flexShrink: 0,
-          background: '#0d0d0f',
+          minHeight: isMobile ? 220 : undefined,
+          height: isMobile ? 220 : 'auto',
+          background: '#0f0e16',
           position: 'relative',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          order: isMobile ? -1 : 0,
+          borderBottom: isMobile ? '1px solid #2a2a2e' : 'none',
         }}
       >
         {/* Color accent strip */}

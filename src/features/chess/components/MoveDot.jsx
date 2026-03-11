@@ -1,6 +1,12 @@
 import { memo } from "react";
 
-const MoveDot = memo(function MoveDot({ position, onClick }) {
+const MoveDot = memo(function MoveDot({
+  position,
+  onClick,
+  color = "#44ff88",
+  emissive = color,
+  opacity = 0.72,
+}) {
   return (
     <mesh
       position={position}
@@ -14,10 +20,10 @@ const MoveDot = memo(function MoveDot({ position, onClick }) {
     >
       <cylinderGeometry args={[0.2, 0.2, 0.055, 20]} />
       <meshStandardMaterial
-        color="#44ff88"
+        color={color}
         transparent
-        opacity={0.72}
-        emissive="#44ff88"
+        opacity={opacity}
+        emissive={emissive}
         emissiveIntensity={0.55}
       />
     </mesh>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import useResponsive from '../hooks/useResponsive';
 
 export default function ProjectModal({ project, onClose }) {
   const [imgError, setImgError] = useState(false);
+  const { isMobile, isCompact } = useResponsive();
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -28,19 +30,19 @@ export default function ProjectModal({ project, onClose }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2rem',
+        padding: isMobile ? '0.75rem' : '2rem',
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: '85vw',
-          height: '85vh',
+          width: isMobile ? '100%' : '85vw',
+          height: isMobile ? 'calc(100vh - 1.5rem)' : '85vh',
           maxWidth: 1500,
-          maxHeight: '85vh',
-          background: '#111113',
+          maxHeight: isMobile ? 'calc(100vh - 1.5rem)' : '85vh',
+          background: '#12111a',
           border: '1px solid #3f3f46',
-          borderRadius: 6,
+          borderRadius: isMobile ? 10 : 6,
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -52,13 +54,15 @@ export default function ProjectModal({ project, onClose }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '1.2rem 1.75rem',
+            padding: isMobile ? '1rem' : '1.2rem 1.75rem',
             borderBottom: '1px solid #2a2a2e',
-            background: '#0d0d0f',
+            background: '#0f0e16',
             flexShrink: 0,
+            flexWrap: 'wrap',
+            gap: '0.75rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             {project.logo ? (
               <img 
                 src={project.logo} 
@@ -72,7 +76,7 @@ export default function ProjectModal({ project, onClose }) {
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 700,
-                fontSize: '1.35rem',
+                fontSize: isMobile ? '1.1rem' : '1.5rem',
                 background: 'linear-gradient(135deg, #c8c8d4 0%, #f0f0f8 40%, #9090a8 60%, #e0e0ec 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -85,9 +89,9 @@ export default function ProjectModal({ project, onClose }) {
               <span
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.68rem',
+                  fontSize: isMobile ? '0.68rem' : '0.74rem',
                   color: '#888898',
-                  letterSpacing: '0.1em',
+                  letterSpacing: '0.15em',
                   background: 'rgba(144,144,184,0.08)',
                   border: '1px solid #2a2a2e',
                   padding: '4px 10px',
@@ -105,11 +109,12 @@ export default function ProjectModal({ project, onClose }) {
               border: '1px solid #2a2a2e',
               color: '#888898',
               cursor: 'pointer',
-              padding: '7px 14px',
+              padding: isCompact ? '6px 10px' : '7px 14px',
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.8rem',
+              fontSize: isCompact ? '0.72rem' : '0.8rem',
               borderRadius: 2,
               transition: 'border-color 0.15s, color 0.15s',
+              marginLeft: 'auto',
             }}
             onMouseEnter={e => { e.target.style.borderColor = '#3f3f46'; e.target.style.color = '#e8e8f4'; }}
             onMouseLeave={e => { e.target.style.borderColor = '#2a2a2e'; e.target.style.color = '#888898'; }}
@@ -122,6 +127,7 @@ export default function ProjectModal({ project, onClose }) {
         <div
           style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             flex: 1,
             overflow: 'hidden',
           }}
@@ -131,15 +137,16 @@ export default function ProjectModal({ project, onClose }) {
             style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '2.25rem 2.5rem',
-              borderRight: '1px solid #2a2a2e',
+              padding: isMobile ? '1.25rem' : '2.25rem 2.5rem',
+              borderRight: isMobile ? 'none' : '1px solid #2a2a2e',
+              borderBottom: isMobile ? '1px solid #2a2a2e' : 'none',
             }}
           >
             <p
               style={{
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '1.22rem',
-                color: '#dddde8',
+                fontSize: isMobile ? '1.06rem' : '1.3rem',
+                color: '#ececf4',
                 fontWeight: 500,
                 margin: '0 0 1.5rem 0',
                 lineHeight: 1.6,
@@ -151,9 +158,9 @@ export default function ProjectModal({ project, onClose }) {
             <div
               style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.84rem',
-                color: '#888898',
-                lineHeight: 1.95,
+                fontSize: isMobile ? '0.9rem' : '1rem',
+                color: '#b7b7c9',
+                lineHeight: 1.9,
                 whiteSpace: 'pre-line',
               }}
             >
@@ -165,9 +172,9 @@ export default function ProjectModal({ project, onClose }) {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.66rem',
-                  letterSpacing: '0.2em',
-                  color: '#9090b8',
+                  fontSize: isMobile ? '0.68rem' : '0.72rem',
+                  letterSpacing: '0.15em',
+                  color: '#a8a8d0',
                   textTransform: 'uppercase',
                   marginBottom: '0.75rem',
                 }}
@@ -186,15 +193,15 @@ export default function ProjectModal({ project, onClose }) {
           {/* Right: screenshot */}
           <div
             style={{
-              width: '44%',
+              width: isMobile ? '100%' : '44%',
               flexShrink: 0,
-              background: '#0a0a0b',
+              background: '#0f0e16',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'stretch',
               justifyContent: 'flex-start',
               gap: '1.25rem',
-              padding: '2rem',
+              padding: isMobile ? '1.25rem' : '2rem',
               overflowY: 'auto',
             }}
           >
@@ -242,9 +249,9 @@ export default function ProjectModal({ project, onClose }) {
                 <div
                   style={{
                     fontFamily: 'Outfit, sans-serif',
-                    fontSize: '0.66rem',
-                    letterSpacing: '0.2em',
-                    color: '#9090b8',
+                    fontSize: isMobile ? '0.68rem' : '0.72rem',
+                    letterSpacing: '0.15em',
+                    color: '#a8a8d0',
                     textTransform: 'uppercase',
                     marginBottom: '0.75rem',
                   }}
@@ -260,7 +267,7 @@ export default function ProjectModal({ project, onClose }) {
                       rel="noopener noreferrer"
                       style={{
                         fontFamily: 'Outfit, sans-serif',
-                        fontSize: '0.78rem',
+                        fontSize: isMobile ? '0.78rem' : '0.88rem',
                         color: project.color,
                         textDecoration: 'none',
                         border: `1px solid ${project.color}44`,

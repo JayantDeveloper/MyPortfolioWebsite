@@ -17,6 +17,11 @@ export default function ChessExperience() {
     goToIntro,
     handleSquareClick,
     isCurrentTurnInCheck,
+    cancelPremove,
+    displayBoard,
+    premoveSelection,
+    premoveLegalMoves,
+    premoveQueue,
   } = useChessGame();
 
   const isPlaying = phase === "playing" && Boolean(gameState);
@@ -32,6 +37,13 @@ export default function ChessExperience() {
       }}
     >
       <section
+        onContextMenu={(event) => {
+          if (!isPlaying || (!premoveQueue.length && !premoveSelection)) {
+            return;
+          }
+          event.preventDefault();
+          cancelPremove();
+        }}
         style={{
           width: "100%",
           height: "100%",
@@ -63,7 +75,14 @@ export default function ChessExperience() {
           >
             <Suspense fallback={null}>
               {isPlaying ? (
-                <GameScene gameState={gameState} onSquareClick={handleSquareClick} />
+                <GameScene
+                  gameState={gameState}
+                  displayBoard={displayBoard}
+                  onSquareClick={handleSquareClick}
+                  premoveSelection={premoveSelection}
+                  premoveLegalMoves={premoveLegalMoves}
+                  premoveQueue={premoveQueue}
+                />
               ) : (
                 <IntroScene />
               )}

@@ -1,3 +1,5 @@
+import useResponsive from '../hooks/useResponsive';
+
 const experience = [
   {
     company: 'Booz Allen Hamilton',
@@ -65,17 +67,25 @@ const awards = [
 ];
 
 export default function About() {
+  const { isMobile, isTablet } = useResponsive();
+
   return (
     <div style={{ paddingTop: 56 }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '5rem 2rem' }}>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: isMobile ? '4.5rem 1rem 3.5rem' : '6.5rem 2rem 5rem',
+        }}
+      >
         {/* Header */}
-        <div style={{ marginBottom: '4rem' }}>
+        <div style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>
           <div
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.58rem',
-              letterSpacing: '0.25em',
-              color: '#9090b8',
+              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              letterSpacing: '0.15em',
+              color: '#a8a8d0',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
@@ -100,10 +110,10 @@ export default function About() {
           <p
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.78rem',
-              color: '#aaaabc',
+              fontSize: isMobile ? '0.96rem' : '1rem',
+              color: '#bcbdcf',
               maxWidth: 620,
-              lineHeight: 1.9,
+              lineHeight: 1.8,
               margin: 0,
             }}
           >
@@ -115,18 +125,29 @@ export default function About() {
           </p>
         </div>
 
-        <div style={{ borderTop: '1px solid #2a2a2e', marginBottom: '4rem' }} />
+        <div
+          style={{
+            borderTop: '1px solid #2a2a2e',
+            marginBottom: isMobile ? '2.5rem' : '4rem',
+          }}
+        />
 
         {/* Two-column: Experience + Skills */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isTablet ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '2.5rem' : '4rem',
+          }}
+        >
 
           {/* Experience */}
           <div>
             <div
               style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.65rem',
-                letterSpacing: '0.25em',
+                fontSize: isMobile ? '1.04rem' : '0.92rem',
+                letterSpacing: '0.15em',
                 color: '#b76e79', // Rose gold accent
                 textTransform: 'uppercase',
                 marginBottom: '2rem',
@@ -142,7 +163,7 @@ export default function About() {
                     background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
                     border: '1px solid rgba(183, 110, 121, 0.1)',
                     borderRadius: '12px',
-                    padding: '1.5rem',
+                    padding: isMobile ? '1.35rem' : '1.85rem',
                     transition: 'transform 0.2s ease, border-color 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
@@ -157,16 +178,23 @@ export default function About() {
                   <div
                     style={{
                       display: 'flex',
+                      flexDirection: isMobile ? 'column' : 'row',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
                       marginBottom: '1rem',
-                      gap: '0.5rem',
+                      gap: isMobile ? '0.9rem' : '0.5rem',
                     }}
                   >
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '1rem',
+                        alignItems: isMobile ? 'flex-start' : 'center',
+                      }}
+                    >
                       <div style={{
-                        width: 44,
-                        height: 44,
+                        width: isMobile ? 40 : 44,
+                        height: isMobile ? 40 : 44,
                         borderRadius: '8px',
                         background: '#ffffff',
                         display: 'flex',
@@ -188,7 +216,7 @@ export default function About() {
                           style={{
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: 700,
-                            fontSize: '0.95rem',
+                            fontSize: isMobile ? '1.02rem' : '1.08rem',
                             color: '#f5d0c5', // Warm text color
                           }}
                         >
@@ -197,7 +225,7 @@ export default function About() {
                         <div
                           style={{
                             fontFamily: 'Outfit, sans-serif',
-                            fontSize: '0.75rem',
+                            fontSize: isMobile ? '0.86rem' : '0.88rem',
                             color: '#b0b0d8',
                             marginTop: 4,
                           }}
@@ -209,7 +237,7 @@ export default function About() {
                     <span
                       style={{
                         fontFamily: 'Outfit, sans-serif',
-                        fontSize: '0.65rem',
+                        fontSize: isMobile ? '0.74rem' : '0.74rem',
                         color: '#888898',
                         whiteSpace: 'nowrap',
                         background: 'rgba(255,255,255,0.03)',
@@ -227,9 +255,9 @@ export default function About() {
                         key={i}
                         style={{
                           fontFamily: 'Outfit, sans-serif',
-                          fontSize: '0.75rem',
-                          color: '#aaaabc',
-                          lineHeight: 1.6,
+                          fontSize: isMobile ? '0.86rem' : '0.9rem',
+                          color: '#bcbdcf',
+                          lineHeight: 1.7,
                         }}
                       >
                         {b}
@@ -248,8 +276,8 @@ export default function About() {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.25em',
+                  fontSize: isMobile ? '1.04rem' : '0.92rem',
+                  letterSpacing: '0.15em',
                   color: '#b76e79',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
@@ -261,19 +289,19 @@ export default function About() {
                 background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
                 border: '1px solid rgba(183, 110, 121, 0.1)', 
                 borderRadius: '12px', 
-                padding: '1.5rem',
+                padding: isMobile ? '1.35rem' : '1.85rem',
                 transition: 'border-color 0.2s ease',
               }}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.3)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.1)'; }}
               >
-                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.95rem', color: '#f5d0c5' }}>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: isMobile ? '1.02rem' : '1.08rem', color: '#f5d0c5' }}>
                   University of Maryland
                 </div>
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', color: '#b0b0d8', marginTop: 8 }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isMobile ? '0.86rem' : '0.9rem', color: '#c2c2df', marginTop: 8, lineHeight: 1.7 }}>
                   B.S. Computer Science · Minor: Computational Finance
                 </div>
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.65rem', color: '#888898', marginTop: 8, background: 'rgba(255,255,255,0.03)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.05)', display: 'inline-block' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isMobile ? '0.72rem' : '0.65rem', color: '#888898', marginTop: 8, background: 'rgba(255,255,255,0.03)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.05)', display: 'inline-block' }}>
                   May 2028
                 </div>
               </div>
@@ -284,8 +312,8 @@ export default function About() {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.25em',
+                  fontSize: isMobile ? '1.04rem' : '0.92rem',
+                  letterSpacing: '0.15em',
                   color: '#b76e79',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
@@ -299,7 +327,7 @@ export default function About() {
                     <div
                       style={{
                         fontFamily: 'Outfit, sans-serif',
-                        fontSize: '0.65rem',
+                        fontSize: isMobile ? '0.74rem' : '0.7rem',
                         color: '#f5d0c5',
                         letterSpacing: '0.1em',
                         marginBottom: '0.75rem',
@@ -315,7 +343,7 @@ export default function About() {
                           border: '1px solid rgba(183, 110, 121, 0.2)',
                           color: '#f5d0c5',
                           fontFamily: 'Outfit, sans-serif',
-                          fontSize: '0.7rem',
+                          fontSize: isMobile ? '0.82rem' : '0.8rem',
                           letterSpacing: '0.05em',
                           padding: '4px 10px',
                           borderRadius: '4px',
@@ -334,8 +362,8 @@ export default function About() {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.25em',
+                  fontSize: isMobile ? '1.04rem' : '0.92rem',
+                  letterSpacing: '0.15em',
                   color: '#b76e79',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
@@ -349,9 +377,9 @@ export default function About() {
                     key={a}
                     style={{
                       fontFamily: 'Outfit, sans-serif',
-                      fontSize: '0.75rem',
-                      color: '#aaaabc',
-                      lineHeight: 1.6,
+                      fontSize: isMobile ? '0.86rem' : '0.9rem',
+                      color: '#bcbdcf',
+                      lineHeight: 1.7,
                       paddingLeft: '1.2rem',
                       position: 'relative',
                     }}

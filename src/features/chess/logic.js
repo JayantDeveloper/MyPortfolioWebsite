@@ -90,6 +90,11 @@ export function pieceType(piece) {
   return piece.toUpperCase();
 }
 
+export function isPromotionMove(board, from, to) {
+  const piece = board[from[0]][from[1]];
+  return pieceType(piece) === "P" && (to[0] === 0 || to[0] === 7);
+}
+
 function inBounds(row, column) {
   return row >= 0 && row < 8 && column >= 0 && column < 8;
 }
@@ -255,7 +260,8 @@ export function isInCheck(board, color) {
   return false;
 }
 
-export function applyMove(board, from, to, promotion = "q") {
+export function applyMove(board, from, to, promotion = "q", options = {}) {
+  const { deferPromotion = false } = options;
   const nextBoard = board.map((row) => [...row]);
   const piece = nextBoard[from[0]][from[1]];
   const color = pieceColor(piece);
@@ -283,8 +289,12 @@ export function applyMove(board, from, to, promotion = "q") {
   nextBoard[from[0]][from[1]] = null;
 
   if (pieceType(piece) === "P" && (to[0] === 0 || to[0] === 7)) {
-    const promoted = promotion.toUpperCase();
-    nextBoard[to[0]][to[1]] = color === "w" ? promoted : promoted.toLowerCase();
+    if (deferPromotion) {
+      nextBoard[to[0]][to[1]] = color === "w" ? "P" : "p";
+    } else {
+      const promoted = promotion.toUpperCase();
+      nextBoard[to[0]][to[1]] = color === "w" ? promoted : promoted.toLowerCase();
+    }
   }
 
   return { board: nextBoard, enPassant };
