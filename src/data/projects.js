@@ -1,0 +1,107 @@
+export const projects = [
+  {
+    id: 'codekiwi',
+    name: 'CodeKiwi',
+    tagline: 'Live coding classroom platform for Google Slides',
+    description:
+      'CodeKiwi turns Google Slides presentations into interactive coding lessons. Teachers control slides normally while students get a synchronized Monaco code editor with live execution — think Peardeck, but built for programmers.',
+    longDescription: `CodeKiwi is a platform designed for teaching programming in real classrooms using Google Slides. Teachers control slides through their existing Google Slides workflow, while students join a session and see synchronized slides alongside a live Monaco-based code editor.\n\nStudents can write, run, and iterate on code directly during a lecture. Code executes inside isolated Docker containers, and results stream back to the browser terminal in real time. Teachers get a dashboard to monitor student code, inspect submissions, and track progress.\n\nA Google Apps Script Add-on lets teachers export slides as PDFs, upload them to the backend, and start teaching sessions without leaving Google Slides. CodeKiwi is currently being prepared for Google Workspace Marketplace publication.`,
+    tags: ['React', 'TypeScript', 'WebSockets', 'Docker', 'Node.js', 'Monaco Editor'],
+    links: [
+      { label: 'Live Site', url: 'https://codekiwi.tech' },
+      { label: 'GitHub', url: 'https://github.com/JayantDeveloper/codekiwi-site' },
+    ],
+    logo: '/projectlogos/codekiwi.png',
+    thumbnail: 'https://codekiwi.tech',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fcodekiwi.tech&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Bitcamp 2025 (UMD)',
+    color: '#4ade80',
+  },
+  {
+    id: 'biterank',
+    name: 'BiteRank',
+    tagline: 'AI-ranked fast-food deal aggregator',
+    description:
+      'BiteRank scrapes fast-food menus across platforms and scores every item by value — factoring in price, calories, portion size, and active promos. Find the best deal, instantly.',
+    longDescription: `BiteRank aggregates fast-food menu data and deals, then ranks items by a custom value score. The scraping pipeline collects item names, prices, calories, and promotional discounts from restaurant websites and delivery platforms on a scheduled basis.\n\nThe ranking algorithm weights price efficiency, calorie density, portion size, and active discounts to produce a single value score per item. Backend APIs expose restaurant and menu queries with deal-quality filters, and automated jobs keep rankings current.\n\nFuture plans include location-based deal discovery, push notifications for new deals, and historical price tracking.`,
+    tags: ['React', 'Node.js', 'Python', 'Web Scraping', 'REST API'],
+    links: [
+      { label: 'Live Site', url: 'https://biterank.tech' },
+      { label: 'GitHub', url: 'https://github.com/JayantDeveloper/BiteRankFrontend' },
+    ],
+    logo: '/projectlogos/biterank.png',
+    thumbnail: 'https://biterank.tech',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fbiterank.tech&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Google Developer Hackathon 2025 (UMD)',
+    color: '#fb923c',
+  },
+  {
+    id: 'wisecities',
+    name: 'Wise Cities',
+    tagline: 'Hybrid recommendation system for local services',
+    description:
+      'Built the search and recommendation backbone for Wise Cities — a platform helping users discover local services. Combines collaborative filtering, matrix factorization, KNN, and Pinecone vector search.',
+    longDescription: `At Wise Cities, I built the search pipeline and recommendation system powering local service discovery. The hybrid recommendation engine combines collaborative filtering, matrix factorization, K-nearest neighbors, and popularity baselines to improve recommendation quality beyond any single approach.\n\nUser interaction data (clicks, page views, interactions from Amplitude) is converted into embeddings and stored in Pinecone for vector similarity search. I also built a search pipeline using inverted indexing and edit-distance ranking, reducing query latency by ~35%, and integrated Typesense to support scalable search over tens of thousands of entities.\n\nInternal evaluation tools measure precision, recall, and ranking performance to continuously improve the system.`,
+    tags: ['Python', 'gRPC', 'Pinecone', 'Vector Search', 'TypeScript', 'Typesense'],
+    links: [
+      { label: 'Live Site', url: 'https://www.wisecities.us/' },
+    ],
+    logo: '/experiencelogos/wise_cities_logo.jpeg',
+    thumbnail: 'https://www.wisecities.us/',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fwww.wisecities.us&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Internship Project',
+    color: '#60a5fa',
+  },
+  {
+    id: 'lofifocusdesk',
+    name: 'LofiFocusDesk',
+    tagline: 'Immersive 3D productivity workspace',
+    description:
+      'A full 3D desk environment in the browser where you can manage tasks, run Pomodoro timers, and vibe to lofi — all inside a living, breathing room with a real in-game day/night cycle.',
+    longDescription: `LofiFocusDesk is an immersive 3D focus workspace built with React Three Fiber and Three.js. The scene recreates a stylized desk environment with a lamp, clock, radio, notebook, and plant — all procedurally textured via HTML canvas.\n\nThe environment runs a continuous in-game time system with sun/moon transitions, sky color shifts, interior lighting changes, and dynamic building window lighting. Even the browser favicon and tab title update to match the in-game time.\n\nProductivity features include a full to-do board with difficulty levels, drag-and-drop ordering, and completion tracking (persisted in SQLite), plus a Pomodoro timer and a focus/task scoring system. A Google Calendar popup and a hidden YouTube lofi radio round out the workspace.`,
+    tags: ['React', 'Three.js', 'React Three Fiber', 'Express', 'SQLite'],
+    links: [
+      { label: 'Live Demo', url: 'https://lofifocusdesk.vercel.app/' },
+    ],
+    logo: '/projectlogos/lofifocusdesk.png',
+    thumbnail: 'https://lofifocusdesk.vercel.app/',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Flofifocusdesk.vercel.app&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Personal Project',
+    color: '#c084fc',
+  },
+  {
+    id: 'harmony',
+    name: 'Harmony',
+    tagline: 'AI room layout optimizer with 3D visualization',
+    description:
+      'Upload two photos of your room. Gemini + Claude reconstruct the 3D layout, score it for openness and walkability, then auto-generate optimized furniture arrangements with heatmap overlays.',
+    longDescription: `Harmony is an AI-powered room layout design tool built at a UMD hackathon. Users upload two photos of their room — Gemini analyzes the images to extract room dimensions and furniture objects, then Claude normalizes the output to a structured schema.\n\nThe system renders the room in a 3D viewer and evaluates the layout using a Harmony Score based on collision checks, clearance rules, walkable space, and doorway blocking. The optimization engine searches alternative furniture placements and rotations to maximize the score.\n\nVisualization includes the harmony score, heatmaps highlighting problem areas, and a side-by-side comparison of original vs. optimized layouts.`,
+    tags: ['FastAPI', 'Python', 'Gemini', 'Claude API', 'React', 'Three.js'],
+    links: [
+      { label: 'Live Demo', url: 'https://harmony-1-ko2x.onrender.com' },
+    ],
+    logo: '/projectlogos/harmony.png',
+    thumbnail: 'https://harmony-1-ko2x.onrender.com',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fharmony-1-ko2x.onrender.com&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'UMD × Ironsite Startup Shell Hackathon',
+    color: '#f472b6',
+  },
+  {
+    id: 'dinodebtdash',
+    name: 'Dino Debt Dash',
+    tagline: 'Finance education through endless runner gameplay',
+    description:
+      'Run from debt dinosaurs while answering adaptive finance questions. Wrong answers let them catch up. Built with Kaplay game engine — making compound interest genuinely scary.',
+    longDescription: `Dino Debt Dash is a gamified finance education platform built at UMBC Hacks 2025. Players run through a side-scrolling environment while answering finance questions — incorrect answers allow "debt dinos" to close the gap.\n\nAn AI-powered adaptive question system adjusts difficulty based on player performance, ensuring questions stay challenging without becoming discouraging. The game features custom sprites, themed UI, and music/sound effects built with the Kaplay game engine.\n\nThe goal is to make core finance concepts (compound interest, budgeting, debt management) sticky through gameplay rather than rote memorization.`,
+    tags: ['React', 'TypeScript', 'Kaplay', 'Node.js', 'Cloudflare'],
+    links: [
+      { label: 'Live Demo', url: 'https://debtdino.tech' },
+      { label: 'Devpost', url: 'https://devpost.com/software/dino-debt-dash' }
+    ],
+    logo: '/projectlogos/dinodebtdash.png',
+    thumbnail: 'https://debtdino.tech',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fdebtdino.tech&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'UMBC Hacks 2025',
+    color: '#facc15',
+  },
+];
