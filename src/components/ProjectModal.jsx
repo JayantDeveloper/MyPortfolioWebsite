@@ -34,9 +34,10 @@ export default function ProjectModal({ project, onClose }) {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: '90%',
-          maxWidth: 1000,
-          maxHeight: '90vh',
+          width: '85vw',
+          height: '85vh',
+          maxWidth: 1500,
+          maxHeight: '85vh',
           background: '#111113',
           border: '1px solid #3f3f46',
           borderRadius: 6,
@@ -51,7 +52,7 @@ export default function ProjectModal({ project, onClose }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '1rem 1.5rem',
+            padding: '1.2rem 1.75rem',
             borderBottom: '1px solid #2a2a2e',
             background: '#0d0d0f',
             flexShrink: 0,
@@ -71,7 +72,7 @@ export default function ProjectModal({ project, onClose }) {
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 700,
-                fontSize: '1.15rem',
+                fontSize: '1.35rem',
                 background: 'linear-gradient(135deg, #c8c8d4 0%, #f0f0f8 40%, #9090a8 60%, #e0e0ec 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -84,12 +85,12 @@ export default function ProjectModal({ project, onClose }) {
               <span
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.6rem',
+                  fontSize: '0.68rem',
                   color: '#888898',
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.1em',
                   background: 'rgba(144,144,184,0.08)',
                   border: '1px solid #2a2a2e',
-                  padding: '2px 8px',
+                  padding: '4px 10px',
                   borderRadius: 2,
                 }}
               >
@@ -104,9 +105,9 @@ export default function ProjectModal({ project, onClose }) {
               border: '1px solid #2a2a2e',
               color: '#888898',
               cursor: 'pointer',
-              padding: '4px 10px',
+              padding: '7px 14px',
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.75rem',
+              fontSize: '0.8rem',
               borderRadius: 2,
               transition: 'border-color 0.15s, color 0.15s',
             }}
@@ -130,18 +131,18 @@ export default function ProjectModal({ project, onClose }) {
             style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '1.75rem 2rem',
+              padding: '2.25rem 2.5rem',
               borderRight: '1px solid #2a2a2e',
             }}
           >
             <p
               style={{
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '1.05rem',
+                fontSize: '1.22rem',
                 color: '#dddde8',
                 fontWeight: 500,
-                margin: '0 0 1.25rem 0',
-                lineHeight: 1.5,
+                margin: '0 0 1.5rem 0',
+                lineHeight: 1.6,
               }}
             >
               {project.tagline}
@@ -150,9 +151,9 @@ export default function ProjectModal({ project, onClose }) {
             <div
               style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.72rem',
+                fontSize: '0.84rem',
                 color: '#888898',
-                lineHeight: 1.85,
+                lineHeight: 1.95,
                 whiteSpace: 'pre-line',
               }}
             >
@@ -164,11 +165,11 @@ export default function ProjectModal({ project, onClose }) {
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.58rem',
+                  fontSize: '0.66rem',
                   letterSpacing: '0.2em',
                   color: '#9090b8',
                   textTransform: 'uppercase',
-                  marginBottom: '0.6rem',
+                  marginBottom: '0.75rem',
                 }}
               >
                 Tech Stack
@@ -186,11 +187,11 @@ export default function ProjectModal({ project, onClose }) {
                 <div
                   style={{
                     fontFamily: 'Outfit, sans-serif',
-                    fontSize: '0.58rem',
+                    fontSize: '0.66rem',
                     letterSpacing: '0.2em',
                     color: '#9090b8',
                     textTransform: 'uppercase',
-                    marginBottom: '0.6rem',
+                    marginBottom: '0.75rem',
                   }}
                 >
                   Links
@@ -204,11 +205,11 @@ export default function ProjectModal({ project, onClose }) {
                       rel="noopener noreferrer"
                       style={{
                         fontFamily: 'Outfit, sans-serif',
-                        fontSize: '0.68rem',
+                        fontSize: '0.78rem',
                         color: project.color,
                         textDecoration: 'none',
                         border: `1px solid ${project.color}44`,
-                        padding: '4px 12px',
+                        padding: '8px 14px',
                         borderRadius: 2,
                         background: `${project.color}0d`,
                         transition: 'background 0.15s',
@@ -228,13 +229,13 @@ export default function ProjectModal({ project, onClose }) {
           {/* Right: screenshot */}
           <div
             style={{
-              width: '42%',
+              width: '44%',
               flexShrink: 0,
               background: '#0a0a0b',
               display: 'flex',
               alignItems: 'flex-start',
               justifyContent: 'center',
-              padding: '1.5rem',
+              padding: '2rem',
               overflowY: 'auto',
             }}
           >
