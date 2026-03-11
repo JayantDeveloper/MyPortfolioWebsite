@@ -92,7 +92,7 @@ export const LATHE = {
 };
 
 export const LATHE_RADIUS = { P: 0.72, Q: 0.74, K: 0.78 };
-export const PIECE_SCALE = { P: 1.48, N: 1.5, B: 1.87, R: 1.254, Q: 1.78, K: 1.9 };
+export const PIECE_SCALE = { P: 1.628, N: 1.5, B: 1.87, R: 1.3167, Q: 1.78, K: 1.9 };
 
 export function squareCenter(index) {
   return OFF + index + 0.5;
