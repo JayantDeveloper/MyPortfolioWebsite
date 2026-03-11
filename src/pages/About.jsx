@@ -121,7 +121,7 @@ export default function About() {
             minor in Computational Finance. I've been writing software since middle school — from
             an iPhone app at JHU to ML pipelines at national labs. I like building things that are
             fast, thoughtful, and occasionally weird. Outside of code I'm a chess expert
-            and a Maryland State Champion.
+            and a former Maryland State Champion.
           </p>
         </div>
 

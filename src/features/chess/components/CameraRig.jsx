@@ -7,21 +7,24 @@ import { CAMERA_VIEW } from "../constants";
 export default function CameraRig({ playerColor }) {
   const { camera } = useThree();
   const { isMobile } = useResponsive();
+  const mobileY = CAMERA_VIEW.y + 1.2;
+  const mobileZ = CAMERA_VIEW.z + 1.4;
+  const mobileScale = 20 / Math.hypot(mobileY, mobileZ);
 
   const targetPosition = useMemo(
     () =>
       playerColor === "w"
         ? new THREE.Vector3(
             CAMERA_VIEW.x,
-            isMobile ? CAMERA_VIEW.y + 1.2 : CAMERA_VIEW.y,
-            isMobile ? CAMERA_VIEW.z + 1.4 : CAMERA_VIEW.z,
+            isMobile ? mobileY * mobileScale : CAMERA_VIEW.y,
+            isMobile ? mobileZ * mobileScale : CAMERA_VIEW.z,
           )
         : new THREE.Vector3(
             CAMERA_VIEW.x,
-            isMobile ? CAMERA_VIEW.y + 1.2 : CAMERA_VIEW.y,
-            -(isMobile ? CAMERA_VIEW.z + 1.4 : CAMERA_VIEW.z),
+            isMobile ? mobileY * mobileScale : CAMERA_VIEW.y,
+            -(isMobile ? mobileZ * mobileScale : CAMERA_VIEW.z),
           ),
-    [isMobile, playerColor],
+    [isMobile, mobileScale, mobileY, mobileZ, playerColor],
   );
 
   useEffect(() => {
