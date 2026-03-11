@@ -181,9 +181,64 @@ export default function ProjectModal({ project, onClose }) {
               </div>
             </div>
 
-            {/* Links */}
+          </div>
+
+          {/* Right: screenshot */}
+          <div
+            style={{
+              width: '44%',
+              flexShrink: 0,
+              background: '#0a0a0b',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'stretch',
+              justifyContent: 'flex-start',
+              gap: '1.25rem',
+              padding: '2rem',
+              overflowY: 'auto',
+            }}
+          >
+            {!imgError ? (
+              <img
+                src={project.thumbnailImg}
+                alt={project.name}
+                onError={() => setImgError(true)}
+                style={{
+                  width: '100%',
+                  borderRadius: 4,
+                  border: '1px solid #2a2a2e',
+                  display: 'block',
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '100%',
+                  aspectRatio: '16/9',
+                  border: `1px solid ${project.color}33`,
+                  borderRadius: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  background: '#0d0d0f',
+                }}
+              >
+                <span style={{ fontSize: '2rem', fontFamily: 'Inter', fontWeight: 800, color: project.color, opacity: 0.3 }}>
+                  {project.name[0]}
+                </span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '0.6rem', color: '#888898' }}>Preview unavailable</span>
+              </div>
+            )}
+
             {project.links?.length > 0 && (
-              <div style={{ marginTop: '1.75rem' }}>
+              <div
+                style={{
+                  width: '100%',
+                  marginTop: '0.25rem',
+                }}
+              >
                 <div
                   style={{
                     fontFamily: 'Outfit, sans-serif',
@@ -222,54 +277,6 @@ export default function ProjectModal({ project, onClose }) {
                     </a>
                   ))}
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right: screenshot */}
-          <div
-            style={{
-              width: '44%',
-              flexShrink: 0,
-              background: '#0a0a0b',
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-              padding: '2rem',
-              overflowY: 'auto',
-            }}
-          >
-            {!imgError ? (
-              <img
-                src={project.thumbnailImg}
-                alt={project.name}
-                onError={() => setImgError(true)}
-                style={{
-                  width: '100%',
-                  borderRadius: 4,
-                  border: '1px solid #2a2a2e',
-                  display: 'block',
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: '100%',
-                  aspectRatio: '16/9',
-                  border: `1px solid ${project.color}33`,
-                  borderRadius: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                  background: '#0d0d0f',
-                }}
-              >
-                <span style={{ fontSize: '2rem', fontFamily: 'Inter', fontWeight: 800, color: project.color, opacity: 0.3 }}>
-                  {project.name[0]}
-                </span>
-                <span style={{ fontFamily: 'Outfit', fontSize: '0.6rem', color: '#888898' }}>Preview unavailable</span>
               </div>
             )}
           </div>
