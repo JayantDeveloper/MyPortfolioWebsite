@@ -16,6 +16,7 @@ export function createInitialGameState(playerColor) {
     selected: null,
     legalMoves: [],
     lastMove: null,
+    moveHighlights: [],
     castling: "KQkq",
     enPassant: null,
     pendingPromotion: null,

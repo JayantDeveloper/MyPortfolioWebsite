@@ -17,7 +17,14 @@ import BoardName from "./BoardName";
 import MoveDot from "./MoveDot";
 import PieceGeometry from "./pieces/PieceGeometry";
 
-function resolveSquareColor(row, column, selected, lastMove, premoveSelection, premoveQueue) {
+function resolveSquareColor(
+  row,
+  column,
+  selected,
+  moveHighlights,
+  premoveSelection,
+  premoveQueue,
+) {
   const lightSquare = (row + column) % 2 === 0;
   const isSelected = selected && selected[0] === row && selected[1] === column;
   const isPremoveSelected =
@@ -27,15 +34,17 @@ function resolveSquareColor(row, column, selected, lastMove, premoveSelection, p
       (move.from[0] === row && move.from[1] === column) ||
       (move.to[0] === row && move.to[1] === column),
   );
-  const isFromSquare =
-    lastMove && lastMove.from[0] === row && lastMove.from[1] === column;
-  const isToSquare = lastMove && lastMove.to[0] === row && lastMove.to[1] === column;
+  const isCommittedMoveSquare = moveHighlights.some(
+    (move) =>
+      (move.from[0] === row && move.from[1] === column) ||
+      (move.to[0] === row && move.to[1] === column),
+  );
 
   if (isSelected) {
     return lightSquare ? SELECTED_LIGHT_SQUARE_COLOR : SELECTED_DARK_SQUARE_COLOR;
   }
 
-  if (isFromSquare || isToSquare) {
+  if (isCommittedMoveSquare) {
     return lightSquare ? LAST_MOVE_LIGHT_SQUARE_COLOR : LAST_MOVE_DARK_SQUARE_COLOR;
   }
 
@@ -53,7 +62,7 @@ export default function ChessBoard({
   selected,
   legalMoves,
   onSquareClick,
-  lastMove,
+  moveHighlights,
   gameStatus,
   premoveSelection,
   premoveLegalMoves,
@@ -90,7 +99,7 @@ export default function ChessBoard({
             row,
             column,
             selected,
-            lastMove,
+            moveHighlights,
             premoveSelection,
             premoveQueue,
           )

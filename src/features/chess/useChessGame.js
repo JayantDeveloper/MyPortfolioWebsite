@@ -83,6 +83,18 @@ function buildPremovePreviewState(gameState, premoveQueue) {
   return previewState;
 }
 
+function appendMoveHighlights(moveHighlights, move) {
+  return [...(moveHighlights || []).slice(-1), move];
+}
+
+function resolveMoveWithHighlights(state, from, to, promotion = "q") {
+  const nextState = resolveMoveState(state, from, to, promotion);
+  return {
+    ...nextState,
+    moveHighlights: appendMoveHighlights(state.moveHighlights, { from, to }),
+  };
+}
+
 export function useChessGame() {
   const [phase, setPhase] = useState("intro");
   const [gameState, setGameState] = useState(null);
@@ -131,10 +143,13 @@ export function useChessGame() {
     clearPremove();
   }, [clearPremove]);
 
-  const premovePreviewState = useMemo(
-    () => buildPremovePreviewState(gameState, premoveQueue),
-    [gameState, premoveQueue],
-  );
+  const premovePreviewState = useMemo(() => {
+    if (!gameState || gameState.turn === gameState.playerColor) {
+      return null;
+    }
+
+    return buildPremovePreviewState(gameState, premoveQueue);
+  }, [gameState, premoveQueue]);
 
   const displayBoard = premovePreviewState?.board ?? gameState?.board ?? null;
 
@@ -170,6 +185,55 @@ export function useChessGame() {
       clearPremove();
     }
   }, [clearPremove, gameState]);
+
+  useEffect(() => {
+    if (
+      !gameState ||
+      gameState.gameStatus !== "playing" ||
+      gameState.turn !== gameState.playerColor
+    ) {
+      return;
+    }
+
+    if (premoveSelection) {
+      clearPremoveSelection();
+    }
+
+    const queuedPremoves = premoveQueueRef.current;
+    if (!queuedPremoves.length) {
+      return;
+    }
+
+    const [nextPremove, ...remainingPremoves] = queuedPremoves;
+    const queuedPiece = gameState.board[nextPremove.from[0]][nextPremove.from[1]];
+    let nextState = gameState;
+    let nextQueue = [];
+
+    if (queuedPiece && pieceColor(queuedPiece) === gameState.playerColor) {
+      const nextLegalMoves = getLegalMoves(
+        gameState.board,
+        nextPremove.from,
+        gameState.castling,
+        gameState.enPassant,
+      );
+
+      if (hasMoveTarget(nextLegalMoves, nextPremove.to[0], nextPremove.to[1])) {
+        nextState = resolveMoveWithHighlights(gameState, nextPremove.from, nextPremove.to);
+        nextQueue = nextState.gameStatus === "playing" ? remainingPremoves : [];
+      }
+    }
+
+    setPremoveQueue(nextQueue);
+
+    if (nextState !== gameState) {
+      setGameState(nextState);
+    }
+  }, [
+    clearPremoveSelection,
+    gameState,
+    premoveSelection,
+    setPremoveQueue,
+  ]);
 
   useEffect(() => {
     if (!gameState || gameState.gameStatus !== "playing") {
@@ -249,7 +313,7 @@ export function useChessGame() {
         return;
       }
 
-      let nextState = resolveMoveState(previousState, move.from, move.to);
+      let nextState = resolveMoveWithHighlights(previousState, move.from, move.to);
       let nextPremoveQueue = premoveQueueRef.current;
 
       if (
@@ -269,7 +333,11 @@ export function useChessGame() {
           );
 
           if (hasMoveTarget(nextLegalMoves, nextPremove.to[0], nextPremove.to[1])) {
-            nextState = resolveMoveState(nextState, nextPremove.from, nextPremove.to);
+            nextState = resolveMoveWithHighlights(
+              nextState,
+              nextPremove.from,
+              nextPremove.to,
+            );
             nextPremoveQueue = nextState.gameStatus === "playing" ? remainingPremoves : [];
           } else {
             nextPremoveQueue = [];
@@ -285,7 +353,15 @@ export function useChessGame() {
     }, 900);
 
     return () => clearTimeout(timeoutId);
-  }, [clearPremove, clearPremoveSelection, gameState?.turn, gameState?.gameStatus, gameState?.playerColor, setPremoveQueue]);
+  }, [
+    clearPremove,
+    clearPremoveSelection,
+    gameState?.board,
+    gameState?.turn,
+    gameState?.gameStatus,
+    gameState?.playerColor,
+    setPremoveQueue,
+  ]);
 
   const handleSquareClick = useCallback((row, column) => {
     if (!gameState || gameState.gameStatus !== "playing") {
@@ -333,7 +409,11 @@ export function useChessGame() {
         );
 
         if (isLegalTarget) {
-          return resolveMoveState(previousState, previousState.selected, [row, column]);
+          return resolveMoveWithHighlights(
+            previousState,
+            previousState.selected,
+            [row, column],
+          );
         }
 
         if (clickedPiece && pieceColor(clickedPiece) === previousState.playerColor) {

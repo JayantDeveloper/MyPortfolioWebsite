@@ -12,7 +12,7 @@ export default function GameScene({
   premoveQueue,
 }) {
   const { isMobile } = useResponsive();
-  const { turn, playerColor, selected, legalMoves, lastMove, gameStatus } =
+  const { turn, playerColor, selected, legalMoves, lastMove, moveHighlights, gameStatus } =
     gameState;
 
   return (
@@ -47,7 +47,7 @@ export default function GameScene({
         selected={selected}
         legalMoves={legalMoves}
         onSquareClick={onSquareClick}
-        lastMove={lastMove}
+        moveHighlights={moveHighlights ?? (lastMove ? [lastMove] : [])}
         gameStatus={gameStatus}
         premoveSelection={premoveSelection}
         premoveLegalMoves={premoveLegalMoves}
