@@ -16,6 +16,7 @@ const PieceGeometry = memo(function PieceGeometry({
   interactive = true,
   onClick,
   onDragStart,
+  onDragMove,
   onDragEnd,
 }) {
   const [hovered, setHovered] = useState(false);
@@ -92,7 +93,16 @@ const PieceGeometry = memo(function PieceGeometry({
         interactive
           ? (event) => {
               event.stopPropagation();
-              onDragStart?.();
+              event.target.setPointerCapture?.(event.pointerId);
+              onDragStart?.(event);
+            }
+          : undefined
+      }
+      onPointerMove={
+        interactive
+          ? (event) => {
+              event.stopPropagation();
+              onDragMove?.(event);
             }
           : undefined
       }
@@ -100,7 +110,8 @@ const PieceGeometry = memo(function PieceGeometry({
         interactive
           ? (event) => {
               event.stopPropagation();
-              onDragEnd?.();
+              event.target.releasePointerCapture?.(event.pointerId);
+              onDragEnd?.(event);
             }
           : undefined
       }
