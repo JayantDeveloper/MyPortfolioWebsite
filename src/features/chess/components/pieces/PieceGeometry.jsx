@@ -15,6 +15,8 @@ const PieceGeometry = memo(function PieceGeometry({
   premoved = false,
   interactive = true,
   onClick,
+  onDragStart,
+  onDragEnd,
 }) {
   const [hovered, setHovered] = useState(false);
   const { gl } = useThree();
@@ -90,6 +92,15 @@ const PieceGeometry = memo(function PieceGeometry({
         interactive
           ? (event) => {
               event.stopPropagation();
+              onDragStart?.();
+            }
+          : undefined
+      }
+      onPointerUp={
+        interactive
+          ? (event) => {
+              event.stopPropagation();
+              onDragEnd?.();
             }
           : undefined
       }

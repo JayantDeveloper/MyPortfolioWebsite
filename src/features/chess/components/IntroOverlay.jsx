@@ -48,32 +48,32 @@ export default function IntroOverlay({ visible, onStart }) {
 
       <div
         style={{
-          fontFamily: '"Palatino Linotype","Book Antiqua",Palatino,serif',
           textAlign: "center",
           userSelect: "none",
-          marginBottom: ".6rem",
+          marginBottom: isMobile ? "1rem" : "1.45rem",
+          fontFamily: '"Palatino Linotype","Book Antiqua",Palatino,serif',
         }}
       >
-              <div
-                style={{
-                  color: "#f5dfa8",
-                  fontSize: "clamp(4rem,10vw,7.8rem)",
-                  fontWeight: 400,
-                  lineHeight: 1,
-                  letterSpacing: ".08em",
+        <div
+          style={{
+            color: "#f5dfa8",
+            fontSize: "clamp(4rem,10vw,7.8rem)",
+            fontWeight: 400,
+            lineHeight: 1,
+            letterSpacing: ".08em",
             textShadow:
               "0 2px 50px rgba(200,169,110,.6),0 0 100px rgba(180,110,20,.22)",
           }}
         >
           JAYANT
         </div>
-              <div
-                style={{
-                  color: "#d4a85a",
-                  fontSize: "clamp(2.4rem,6vw,4.8rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  letterSpacing: ".16em",
+        <div
+          style={{
+            color: "#d4a85a",
+            fontSize: "clamp(2.4rem,6vw,4.8rem)",
+            fontWeight: 400,
+            lineHeight: 1.1,
+            letterSpacing: ".16em",
             textShadow: "0 2px 30px rgba(180,140,60,.4)",
           }}
         >

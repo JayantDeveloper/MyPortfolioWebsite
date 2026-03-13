@@ -3,6 +3,9 @@ export default function CheckBanner({ gameState, inCheck }) {
     return null;
   }
 
+  const isPlayerTurn = gameState.turn === gameState.playerColor;
+  const message = isPlayerTurn ? "You are in check" : "Bot in check";
+
   return (
     <div
       style={{
@@ -10,7 +13,7 @@ export default function CheckBanner({ gameState, inCheck }) {
         top: 72,
         left: "50%",
         transform: "translateX(-50%)",
-        zIndex: 10,
+        zIndex: 30,
         fontFamily: '"Palatino Linotype",serif',
         color: "#ff6b5b",
         fontSize: ".82rem",
@@ -23,9 +26,7 @@ export default function CheckBanner({ gameState, inCheck }) {
         backdropFilter: "blur(8px)",
       }}
     >
-      {gameState.turn === gameState.playerColor
-        ? "You are in check"
-        : "Bot in check"}
+      {message}
     </div>
   );
 }

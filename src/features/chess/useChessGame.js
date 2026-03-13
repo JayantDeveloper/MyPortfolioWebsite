@@ -1,13 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildNoMoveGameOver, createInitialGameState, resolveMoveState } from "./gameState";
+import { INIT_TIME } from "./constants";
 import {
   applyMove,
   getBotMove,
+  getPremoveLegalMoves,
   getLegalMoves,
   isInCheck,
   pieceColor,
   pieceType,
 } from "./logic";
+
+const BOT_THINK_LONG_MIN_MS = 0;
+const BOT_THINK_LONG_MAX_MS = 8000;
+const BOT_THINK_MID_MS = 2000;
+const BOT_THINK_FAST_MS = 1000;
+const BOT_OPENING_MOVE_VARIATION = 48;
 
 function randomPlayerColor() {
   return Math.random() < 0.5 ? "w" : "b";
@@ -87,12 +95,49 @@ function appendMoveHighlights(moveHighlights, move) {
   return [...(moveHighlights || []).slice(-1), move];
 }
 
-function resolveMoveWithHighlights(state, from, to, promotion = "q") {
-  const nextState = resolveMoveState(state, from, to, promotion);
+function preserveSelectedPieceAfterOpponentMove(previousState, nextState) {
+  if (!previousState || !previousState.selected) {
+    return nextState;
+  }
+
+  if (previousState.turn === previousState.playerColor) {
+    return nextState;
+  }
+
+  const selectedSquare = previousState.selected;
+  const selectedPiece = nextState.board[selectedSquare[0]][selectedSquare[1]];
+  if (!selectedPiece || pieceColor(selectedPiece) !== nextState.playerColor) {
+    return { ...nextState, selected: null, legalMoves: [] };
+  }
+
+  if (nextState.gameStatus !== "playing") {
+    return nextState;
+  }
+
   return {
     ...nextState,
-    moveHighlights: appendMoveHighlights(state.moveHighlights, { from, to }),
+    selected: selectedSquare,
+    legalMoves: getLegalMoves(
+      nextState.board,
+      selectedSquare,
+      nextState.castling,
+      nextState.enPassant,
+    ),
   };
+}
+
+function isSameMoveSet(first, second) {
+  if (first.length !== second.length) return false;
+  const secondSet = new Set(second.map(([row, column]) => `${row},${column}`));
+  return first.every(([row, column]) => secondSet.has(`${row},${column}`));
+}
+
+function resolveMoveWithHighlights(state, from, to, promotion = "q") {
+  const nextState = resolveMoveState(state, from, to, promotion);
+  return preserveSelectedPieceAfterOpponentMove(state, {
+    ...nextState,
+    moveHighlights: appendMoveHighlights(state.moveHighlights, { from, to }),
+  });
 }
 
 export function useChessGame() {
@@ -101,11 +146,11 @@ export function useChessGame() {
   const [premoveSelection, setPremoveSelection] = useState(null);
   const [premoveLegalMoves, setPremoveLegalMoves] = useState([]);
   const [premoveQueue, setPremoveQueueState] = useState([]);
+  const [showPremoveMoveTargets, setShowPremoveMoveTargets] = useState(false);
 
   const timerRef = useRef(null);
   const tickRef = useRef(null);
   const botRef = useRef(false);
-  const gameStateRef = useRef(null);
   const premoveQueueRef = useRef([]);
 
   const setPremoveQueue = useCallback((nextQueueOrUpdater) => {
@@ -120,20 +165,23 @@ export function useChessGame() {
   }, []);
 
   const clearPremoveSelection = useCallback(() => {
+    setShowPremoveMoveTargets(false);
     setPremoveSelection(null);
     setPremoveLegalMoves([]);
   }, []);
 
   const clearPremove = useCallback(() => {
+    setShowPremoveMoveTargets(false);
     setPremoveQueue([]);
     clearPremoveSelection();
   }, [clearPremoveSelection, setPremoveQueue]);
 
   const startPremoveSelection = useCallback(
     (state, row, column) => {
+      setShowPremoveMoveTargets(true);
       setPremoveSelection([row, column]);
       setPremoveLegalMoves(
-        getLegalMoves(state.board, [row, column], state.castling, state.enPassant),
+        getPremoveLegalMoves(state.board, [row, column], state.castling, state.enPassant),
       );
     },
     [],
@@ -166,6 +214,25 @@ export function useChessGame() {
     setGameState(createInitialGameState(randomPlayerColor()));
   }, [clearPremove]);
 
+  const resign = useCallback(() => {
+    setGameState((previousState) => {
+      if (!previousState || previousState.gameStatus !== "playing") {
+        return previousState;
+      }
+
+      return {
+        ...previousState,
+        gameStatus: "over",
+        gameResult: "You resigned. Bot wins by resignation!",
+        selected: null,
+        legalMoves: [],
+        pendingPromotion: null,
+      };
+    });
+
+    clearPremove();
+  }, [clearPremove]);
+
   const goToIntro = useCallback(() => {
     clearInterval(timerRef.current);
     botRef.current = false;
@@ -177,14 +244,67 @@ export function useChessGame() {
   useEffect(() => () => clearInterval(timerRef.current), []);
 
   useEffect(() => {
-    gameStateRef.current = gameState;
-  }, [gameState]);
-
-  useEffect(() => {
     if (!gameState || gameState.gameStatus !== "playing") {
       clearPremove();
     }
   }, [clearPremove, gameState]);
+
+  useEffect(() => {
+    if (!gameState || gameState.gameStatus !== "playing" || !gameState.selected) {
+      return;
+    }
+
+    const [selectedRow, selectedColumn] = gameState.selected;
+    const isPlayerTurn = gameState.turn === gameState.playerColor;
+    const boardForMoves = isPlayerTurn
+      ? gameState.board
+      : premovePreviewState?.board ?? gameState.board;
+    const castlingForMoves = isPlayerTurn
+      ? gameState.castling
+      : premovePreviewState?.castling ?? gameState.castling;
+    const enPassantForMoves = isPlayerTurn
+      ? gameState.enPassant
+      : premovePreviewState?.enPassant ?? gameState.enPassant;
+    const getMovesForTurn = isPlayerTurn ? getLegalMoves : getPremoveLegalMoves;
+
+    const selectedPiece = boardForMoves[selectedRow][selectedColumn];
+    if (!selectedPiece || pieceColor(selectedPiece) !== gameState.playerColor) {
+      setGameState((previousState) => {
+        if (!previousState || !previousState.selected) return previousState;
+        return { ...previousState, selected: null, legalMoves: [] };
+      });
+      return;
+    }
+
+    if (!isPlayerTurn && !showPremoveMoveTargets) {
+      return;
+    }
+
+    const recomputedLegalMoves = getMovesForTurn(
+      boardForMoves,
+      gameState.selected,
+      castlingForMoves,
+      enPassantForMoves,
+    );
+
+    if (!isSameMoveSet(recomputedLegalMoves, gameState.legalMoves)) {
+      setGameState((previousState) => {
+        if (!previousState || !previousState.selected) return previousState;
+        return { ...previousState, legalMoves: recomputedLegalMoves };
+      });
+    }
+  }, [
+    gameState?.board,
+    gameState?.castling,
+    gameState?.enPassant,
+    gameState?.selected,
+    gameState?.turn,
+    gameState?.playerColor,
+    premovePreviewState?.board,
+    premovePreviewState?.castling,
+    premovePreviewState?.enPassant,
+    showPremoveMoveTargets,
+  ]);
 
   useEffect(() => {
     if (
@@ -286,71 +406,51 @@ export function useChessGame() {
     }
 
     botRef.current = true;
+    const currentBotTurnClock = gameState.turn === "w" ? gameState.wTime : gameState.bTime;
+    const shouldUseMoveNoise = currentBotTurnClock > 60_000;
+    const botThinkMs =
+      currentBotTurnClock > 60_000
+        ? BOT_THINK_LONG_MIN_MS +
+          Math.random() * (BOT_THINK_LONG_MAX_MS - BOT_THINK_LONG_MIN_MS)
+        : currentBotTurnClock > 30_000
+          ? BOT_THINK_MID_MS
+          : BOT_THINK_FAST_MS;
 
     const timeoutId = setTimeout(() => {
-      const previousState = gameStateRef.current;
-      if (
-        !previousState ||
-        previousState.gameStatus !== "playing" ||
-        previousState.turn === previousState.playerColor
-      ) {
-        botRef.current = false;
-        return;
-      }
-
-      const move = getBotMove(
-        previousState.board,
-        previousState.turn,
-        previousState.castling,
-        previousState.enPassant,
-      );
-
-      botRef.current = false;
-
-      if (!move) {
-        clearPremove();
-        setGameState(buildNoMoveGameOver(previousState));
-        return;
-      }
-
-      let nextState = resolveMoveWithHighlights(previousState, move.from, move.to);
-      let nextPremoveQueue = premoveQueueRef.current;
-
-      if (
-        nextState.gameStatus === "playing" &&
-        nextState.turn === nextState.playerColor &&
-        nextPremoveQueue.length > 0
-      ) {
-        const [nextPremove, ...remainingPremoves] = nextPremoveQueue;
-        const queuedPiece = nextState.board[nextPremove.from[0]][nextPremove.from[1]];
-
-        if (queuedPiece && pieceColor(queuedPiece) === nextState.playerColor) {
-          const nextLegalMoves = getLegalMoves(
-            nextState.board,
-            nextPremove.from,
-            nextState.castling,
-            nextState.enPassant,
-          );
-
-          if (hasMoveTarget(nextLegalMoves, nextPremove.to[0], nextPremove.to[1])) {
-            nextState = resolveMoveWithHighlights(
-              nextState,
-              nextPremove.from,
-              nextPremove.to,
-            );
-            nextPremoveQueue = nextState.gameStatus === "playing" ? remainingPremoves : [];
-          } else {
-            nextPremoveQueue = [];
-          }
-        } else {
-          nextPremoveQueue = [];
+      setGameState((currentState) => {
+        if (
+          !currentState ||
+          currentState.gameStatus !== "playing" ||
+          currentState.turn === currentState.playerColor
+        ) {
+          botRef.current = false;
+          return currentState;
         }
-      }
 
-      clearPremoveSelection();
-      setPremoveQueue(nextState.gameStatus === "playing" ? nextPremoveQueue : []);
-      setGameState(nextState);
-    }, 900);
+        const move = getBotMove(
+          currentState.board,
+          currentState.turn,
+          currentState.castling,
+          currentState.enPassant,
+          { moveNoise: shouldUseMoveNoise ? BOT_OPENING_MOVE_VARIATION : 0 },
+        );
+
+        if (!move) {
+          botRef.current = false;
+          clearPremove();
+          return buildNoMoveGameOver(currentState);
+        }
+
+        const nextState = resolveMoveWithHighlights(currentState, move.from, move.to);
+
+        clearPremoveSelection();
+        if (nextState.gameStatus !== "playing") {
+          setPremoveQueue([]);
+        }
+        botRef.current = false;
+        return nextState;
+      });
+    }, botThinkMs);
 
     return () => clearTimeout(timeoutId);
   }, [
@@ -371,22 +471,100 @@ export function useChessGame() {
     if (gameState.turn !== gameState.playerColor) {
       const previewState = premovePreviewState ?? gameState;
       const clickedPiece = previewState.board[row][column];
+      const selectedSquare = gameState.selected;
+      const selectedMoveTarget = selectedSquare
+        ? hasMoveTarget(gameState.legalMoves, row, column)
+        : false;
 
-      if (premoveSelection && hasMoveTarget(premoveLegalMoves, row, column)) {
+      if (selectedMoveTarget || (premoveSelection && hasMoveTarget(premoveLegalMoves, row, column))) {
+        const source = selectedSquare ?? premoveSelection;
+        const nextPremoveQueue = [
+          ...premoveQueueRef.current,
+          { from: source, to: [row, column] },
+        ];
+        const nextPreviewState = buildPremovePreviewState(gameState, nextPremoveQueue);
+        setShowPremoveMoveTargets(false);
+
         setPremoveQueue((previousQueue) => [
           ...previousQueue,
-          { from: premoveSelection, to: [row, column] },
+          { from: source, to: [row, column] },
         ]);
         clearPremoveSelection();
+
+        if (nextPreviewState) {
+          setGameState((previousState) => {
+            if (!previousState || previousState.gameStatus !== "playing") {
+              return previousState;
+            }
+
+            const nextSelectedSquare = [row, column];
+            const selectedPiece = nextPreviewState.board[row]?.[column];
+            if (!selectedPiece || pieceColor(selectedPiece) !== gameState.playerColor) {
+              return {
+                ...previousState,
+                selected: null,
+                legalMoves: [],
+              };
+            }
+
+            return {
+              ...previousState,
+              selected: nextSelectedSquare,
+              legalMoves: [],
+            };
+          });
+        }
+
         return;
       }
 
       if (clickedPiece && pieceColor(clickedPiece) === gameState.playerColor) {
+        const isSameSelectedPiece =
+          selectedSquare &&
+          selectedSquare[0] === row &&
+          selectedSquare[1] === column;
+
+        if (isSameSelectedPiece && showPremoveMoveTargets) {
+          clearPremoveSelection();
+          setGameState((previousState) => {
+            if (!previousState || previousState.gameStatus !== "playing") {
+              return previousState;
+            }
+
+            return {
+              ...previousState,
+              selected: null,
+              legalMoves: [],
+            };
+          });
+          return;
+        }
+
         startPremoveSelection(previewState, row, column);
+        setGameState((previousState) => {
+        if (
+          !previousState ||
+          previousState.gameStatus !== "playing" ||
+          !previousState.board[row]
+        ) {
+          return previousState;
+        }
+
+        const boardForMoves = previewState?.board ?? previousState.board;
+        return {
+          ...previousState,
+          selected: [row, column],
+          legalMoves: getPremoveLegalMoves(
+            boardForMoves,
+            [row, column],
+            previewState?.castling ?? previousState.castling,
+            previewState?.enPassant ?? previousState.enPassant,
+            ),
+          };
+        });
         return;
       }
 
-      clearPremoveSelection();
       return;
     }
 
@@ -407,6 +585,8 @@ export function useChessGame() {
         const isLegalTarget = previousState.legalMoves.some(
           ([targetRow, targetColumn]) => targetRow === row && targetColumn === column,
         );
+        const isSameSelectedSquare =
+          previousState.selected[0] === row && previousState.selected[1] === column;
 
         if (isLegalTarget) {
           return resolveMoveWithHighlights(
@@ -414,6 +594,14 @@ export function useChessGame() {
             previousState.selected,
             [row, column],
           );
+        }
+
+        if (isSameSelectedSquare) {
+          return {
+            ...previousState,
+            selected: null,
+            legalMoves: [],
+          };
         }
 
         if (clickedPiece && pieceColor(clickedPiece) === previousState.playerColor) {
@@ -429,7 +617,7 @@ export function useChessGame() {
           };
         }
 
-        return { ...previousState, selected: null, legalMoves: [] };
+        return previousState;
       }
 
       if (clickedPiece && pieceColor(clickedPiece) === previousState.playerColor) {
@@ -454,23 +642,43 @@ export function useChessGame() {
     premovePreviewState,
     premoveLegalMoves,
     premoveSelection,
+    showPremoveMoveTargets,
     setPremoveQueue,
     startPremoveSelection,
   ]);
 
-  const isCurrentTurnInCheck = useMemo(() => {
-    if (!gameState || gameState.gameStatus !== "playing") return false;
+    const isCurrentTurnInCheck = useMemo(() => {
+    if (!gameState) return false;
     return isInCheck(gameState.board, gameState.turn);
   }, [gameState?.board, gameState?.turn, gameState?.gameStatus]);
+
+  const clearSelection = useCallback(() => {
+    clearPremoveSelection();
+    setShowPremoveMoveTargets(false);
+
+    setGameState((previousState) => {
+      if (!previousState || previousState.selected === null) {
+        return previousState;
+      }
+
+      return {
+        ...previousState,
+        selected: null,
+        legalMoves: [],
+      };
+    });
+  }, [clearPremoveSelection]);
 
   return {
     phase,
     gameState,
     startGame,
     rematch,
+    resign,
     goToIntro,
     handleSquareClick,
     isCurrentTurnInCheck,
+    clearSelection,
     cancelPremove,
     displayBoard,
     premoveSelection,

@@ -2,24 +2,28 @@ import useResponsive from '../hooks/useResponsive';
 
 const links = [
   {
+    icon: '/contacticons/gmail.jpg',
     label: 'Email',
     value: 'jmaheshw@terpmail.umd.edu',
     href: 'mailto:jmaheshw@terpmail.umd.edu',
     desc: 'Best for professional inquiries',
   },
   {
+    icon: '/contacticons/githublogo.png',
     label: 'GitHub',
     value: 'github.com/JayantDeveloper',
     href: 'https://github.com/JayantDeveloper',
     desc: 'Open source & project code',
   },
   {
+    icon: '/contacticons/LinkedIn_icon.png',
     label: 'LinkedIn',
     value: 'linkedin.com/in/jayant-maheshwari6114',
     href: 'https://www.linkedin.com/in/jayant-maheshwari6114/',
     desc: 'Professional network',
   },
   {
+    icon: '/contacticons/iphonecall.webp',
     label: 'Phone',
     value: '443-741-0470',
     href: 'tel:4437410470',
@@ -44,9 +48,9 @@ export default function Contact() {
           <div
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              fontSize: isMobile ? '1.04rem' : '0.92rem',
               letterSpacing: '0.15em',
-              color: '#a8a8d0',
+              color: '#7fb0de',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
@@ -101,7 +105,7 @@ export default function Contact() {
             maxWidth: 800,
           }}
         >
-          {links.map(({ label, value, href, desc }) => (
+          {links.map(({ label, icon, value, href, desc }) => (
             <a
               key={label}
               href={href}
@@ -127,15 +131,33 @@ export default function Contact() {
             >
               <div
                 style={{
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: isMobile ? '0.72rem' : '0.66rem',
-                  color: '#a8a8d0',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.72rem',
                   marginBottom: '0.5rem',
                 }}
               >
-                {label}
+                <img
+                  src={icon}
+                  alt={`${label} icon`}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    objectFit: 'contain',
+                    display: 'block',
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: 'Outfit, sans-serif',
+                    fontSize: isMobile ? '0.72rem' : '0.66rem',
+                    color: '#a8a8d0',
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {label}
+                </span>
               </div>
               <div
                 style={{

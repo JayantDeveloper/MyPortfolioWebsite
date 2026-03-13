@@ -6,6 +6,7 @@ import GameScene from "./components/GameScene";
 import GameStatusHud from "./components/GameStatusHud";
 import IntroOverlay from "./components/IntroOverlay";
 import IntroScene from "./components/IntroScene";
+import useResponsive from "../../hooks/useResponsive";
 import { useChessGame } from "./useChessGame";
 
 export default function ChessExperience() {
@@ -16,16 +17,18 @@ export default function ChessExperience() {
     rematch,
     goToIntro,
     handleSquareClick,
+    clearSelection,
     isCurrentTurnInCheck,
     cancelPremove,
     displayBoard,
     premoveSelection,
     premoveLegalMoves,
     premoveQueue,
+    resign,
   } = useChessGame();
 
   const isPlaying = phase === "playing" && Boolean(gameState);
-
+  const { isMobile } = useResponsive();
   return (
     <div
       style={{
@@ -69,6 +72,9 @@ export default function ChessExperience() {
 
         <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
           <Canvas
+            onPointerMissed={
+              isPlaying ? () => clearSelection() : undefined
+            }
             camera={{ position: [0, 10, 5.5], fov: 46 }}
             shadows
             gl={{ antialias: true }}
@@ -92,6 +98,46 @@ export default function ChessExperience() {
 
         <IntroOverlay visible={phase === "intro"} onStart={startGame} />
         <GameStatusHud gameState={isPlaying ? gameState : null} />
+        {isPlaying && gameState.gameStatus === "playing" ? (
+          <button
+            onClick={resign}
+            style={{
+              position: "absolute",
+              right: isMobile ? "1.2rem" : "1.2rem",
+              top: isMobile ? "1.5rem" : "50%",
+              transform: isMobile ? "none" : "translateY(-50%)",
+              zIndex: 10,
+              border: "1px solid rgba(200,169,110,.25)",
+              color: "#ececf4",
+              background: "rgba(17, 17, 19, 0.55)",
+              fontFamily: '"Palatino Linotype",serif',
+              letterSpacing: ".15em",
+              textTransform: "uppercase",
+              fontSize: isMobile ? ".66rem" : ".78rem",
+              padding: isMobile ? "10px 18px" : "12px 20px",
+              borderRadius: 6,
+              cursor: "pointer",
+              boxShadow: "0 6px 16px rgba(0,0,0,.28)",
+              fontWeight: 500,
+              transition: "background .2s, border-color .2s, color .2s, box-shadow .2s",
+            }}
+            onMouseEnter={(event) => {
+              event.currentTarget.style.background =
+                "linear-gradient(135deg,#5c2320 0%,#a83d38 50%,#5c2320 100%)";
+              event.currentTarget.style.borderColor = "rgba(200,169,110,.45)";
+              event.currentTarget.style.color = "#ffe1cb";
+              event.currentTarget.style.boxShadow = "0 8px 22px rgba(168,61,56,.35)";
+            }}
+            onMouseLeave={(event) => {
+              event.currentTarget.style.background = "rgba(17, 17, 19, 0.55)";
+              event.currentTarget.style.borderColor = "rgba(200,169,110,.25)";
+              event.currentTarget.style.color = "#ececf4";
+              event.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,.28)";
+            }}
+          >
+            Resign
+          </button>
+        ) : null}
         <CheckBanner
           gameState={isPlaying ? gameState : null}
           inCheck={isCurrentTurnInCheck}

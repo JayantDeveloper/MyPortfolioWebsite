@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
   BOARD_DEPTH_OFFSET,
   DARK_SQUARE_COLOR,
@@ -24,11 +24,10 @@ function resolveSquareColor(
   moveHighlights,
   premoveSelection,
   premoveQueue,
+  isPlayerTurn,
 ) {
   const lightSquare = (row + column) % 2 === 0;
   const isSelected = selected && selected[0] === row && selected[1] === column;
-  const isPremoveSelected =
-    premoveSelection && premoveSelection[0] === row && premoveSelection[1] === column;
   const isQueuedPremoveSquare = premoveQueue.some(
     (move) =>
       (move.from[0] === row && move.from[1] === column) ||
@@ -40,16 +39,16 @@ function resolveSquareColor(
       (move.to[0] === row && move.to[1] === column),
   );
 
+  if (!isPlayerTurn && isQueuedPremoveSquare) {
+    return lightSquare ? PREMOVE_LIGHT_SQUARE_COLOR : PREMOVE_DARK_SQUARE_COLOR;
+  }
+
   if (isSelected) {
     return lightSquare ? SELECTED_LIGHT_SQUARE_COLOR : SELECTED_DARK_SQUARE_COLOR;
   }
 
   if (isCommittedMoveSquare) {
     return lightSquare ? LAST_MOVE_LIGHT_SQUARE_COLOR : LAST_MOVE_DARK_SQUARE_COLOR;
-  }
-
-  if (isPremoveSelected || isQueuedPremoveSquare) {
-    return lightSquare ? PREMOVE_LIGHT_SQUARE_COLOR : PREMOVE_DARK_SQUARE_COLOR;
   }
 
   return lightSquare ? LIGHT_SQUARE_COLOR : DARK_SQUARE_COLOR;
@@ -67,33 +66,108 @@ export default function ChessBoard({
   premoveSelection,
   premoveLegalMoves,
   premoveQueue,
+  boardOffsetZ,
 }) {
   const activeMoves = premoveSelection ? premoveLegalMoves : legalMoves;
+  const isPlayerTurn = turn === playerColor;
+  const draggingFromRef = useRef(null);
+  const skipNextClickRef = useRef(false);
 
   const legalTargets = useMemo(() => {
     const targets = new Set();
     activeMoves.forEach(([row, column]) => targets.add(`${row},${column}`));
     return targets;
   }, [activeMoves]);
-  const premoveTargets = useMemo(() => {
-    const targets = new Set();
-    premoveQueue.forEach(({ to }) => targets.add(`${to[0]},${to[1]}`));
-    return targets;
-  }, [premoveQueue]);
+
+  const handleSquareSelection = useCallback(
+    (row, column) => {
+      onSquareClick(row, column);
+    },
+    [onSquareClick],
+  );
+
+  const handleSquareSelectionWithGuard = useCallback(
+    (row, column) => {
+      if (skipNextClickRef.current) {
+        skipNextClickRef.current = false;
+        return;
+      }
+
+      handleSquareSelection(row, column);
+    },
+    [handleSquareSelection],
+  );
+
+  const handlePieceDragStart = useCallback(
+    (row, column) => {
+      draggingFromRef.current = [row, column];
+      // Selection happens on pointer-down; suppress the follow-up click event.
+      skipNextClickRef.current = true;
+      handleSquareSelection(row, column);
+    },
+    [handleSquareSelection],
+  );
+
+  const handlePieceDragEnd = useCallback(
+    (row, column) => {
+      const draggingFrom = draggingFromRef.current;
+      draggingFromRef.current = null;
+
+      if (!draggingFrom) {
+        return;
+      }
+
+      const [fromRow, fromColumn] = draggingFrom;
+      if (fromRow === row && fromColumn === column) {
+        return;
+      }
+
+      skipNextClickRef.current = true;
+      handleSquareSelection(row, column);
+    },
+    [handleSquareSelection],
+  );
+
+  const handleSquarePointerUp = useCallback(
+    (row, column) => {
+      const draggingFrom = draggingFromRef.current;
+      if (!draggingFrom) {
+        return;
+      }
+
+      draggingFromRef.current = null;
+      const [fromRow, fromColumn] = draggingFrom;
+      if (fromRow === row && fromColumn === column) {
+        return;
+      }
+
+      skipNextClickRef.current = true;
+      handleSquareSelection(row, column);
+    },
+    [handleSquareSelection],
+  );
+
+  const handleSquarePointerDown = useCallback(
+    (row, column) => {
+      draggingFromRef.current = null;
+    },
+    [],
+  );
 
   const nameRotationY = playerColor === "b" ? Math.PI : 0;
-  const boardOffsetZ = playerColor === "w" ? -BOARD_DEPTH_OFFSET : BOARD_DEPTH_OFFSET;
+  const resolvedBoardOffsetZ =
+    boardOffsetZ ?? (playerColor === "w" ? -BOARD_DEPTH_OFFSET : BOARD_DEPTH_OFFSET);
 
   return (
     <group
-      position={[0, 0, boardOffsetZ]}
+      position={[0, 0, resolvedBoardOffsetZ]}
       onPointerDown={(event) => {
         event.stopPropagation();
       }}
     >
       <BoardBase
         interactive={gameStatus === "playing"}
-        onSquareClick={onSquareClick}
+        onSquareClick={handleSquareSelectionWithGuard}
         getSquareColor={(row, column) =>
           resolveSquareColor(
             row,
@@ -102,8 +176,11 @@ export default function ChessBoard({
             moveHighlights,
             premoveSelection,
             premoveQueue,
+            isPlayerTurn,
           )
         }
+        onSquarePointerDown={handleSquarePointerDown}
+        onSquarePointerUp={handleSquarePointerUp}
       />
 
       <BoardName rotationY={nameRotationY} />
@@ -114,10 +191,10 @@ export default function ChessBoard({
           <MoveDot
             key={`move-dot-${row}-${column}`}
             position={[squareCenter(column), 0.06, squareCenter(row)]}
-            color={premoveSelection ? "#8f96ff" : undefined}
-            emissive={premoveSelection ? "#b9c1ff" : undefined}
-            opacity={premoveSelection ? 0.82 : undefined}
-            onClick={() => onSquareClick(row, column)}
+            color={
+              "#44ff88"
+            }
+            onClick={() => handleSquareSelectionWithGuard(row, column)}
           />
         );
       })}
@@ -129,7 +206,6 @@ export default function ChessBoard({
           const color = pieceColor(piece);
           const type = pieceType(piece);
           const isLegalTarget = legalTargets.has(`${row},${column}`);
-          const isPremoved = premoveTargets.has(`${row},${column}`);
           const isSelectedPiece =
             (selected && selected[0] === row && selected[1] === column) ||
             (premoveSelection &&
@@ -145,9 +221,13 @@ export default function ChessBoard({
               position={[squareCenter(column), 0.04, squareCenter(row)]}
               selected={isSelectedPiece}
               legalTarget={isLegalTarget}
-              premoved={isPremoved}
+              premoved={false}
+              onDragStart={() => handlePieceDragStart(row, column)}
+              onDragEnd={() => handlePieceDragEnd(row, column)}
               interactive={canInteract}
-              onClick={canInteract ? () => onSquareClick(row, column) : undefined}
+              onClick={
+                canInteract ? () => handleSquareSelectionWithGuard(row, column) : undefined
+              }
             />
           );
         }),

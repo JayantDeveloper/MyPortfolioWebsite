@@ -1,5 +1,6 @@
 import { Environment, OrbitControls } from "@react-three/drei";
 import useResponsive from "../../../hooks/useResponsive";
+import { BOARD_DEPTH_OFFSET } from "../constants";
 import CameraRig from "./CameraRig";
 import ChessBoard from "./ChessBoard";
 
@@ -14,6 +15,7 @@ export default function GameScene({
   const { isMobile } = useResponsive();
   const { turn, playerColor, selected, legalMoves, lastMove, moveHighlights, gameStatus } =
     gameState;
+  const boardOffsetZ = playerColor === "w" ? -BOARD_DEPTH_OFFSET : BOARD_DEPTH_OFFSET;
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function GameScene({
       <CameraRig playerColor={playerColor} />
       <OrbitControls
         enablePan={false}
-        enableRotate
+        enableRotate={false}
         enableZoom
         minPolarAngle={Math.PI / 9}
         maxPolarAngle={Math.PI / 2.4}
@@ -44,6 +46,7 @@ export default function GameScene({
         board={displayBoard ?? gameState.board}
         turn={turn}
         playerColor={playerColor}
+        boardOffsetZ={boardOffsetZ}
         selected={selected}
         legalMoves={legalMoves}
         onSquareClick={onSquareClick}

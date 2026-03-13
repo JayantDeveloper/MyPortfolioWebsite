@@ -7,7 +7,13 @@ import {
   squareCenter,
 } from "../constants";
 
-export default function BoardBase({ getSquareColor, interactive = false, onSquareClick }) {
+export default function BoardBase({
+  getSquareColor,
+  interactive = false,
+  onSquareClick,
+  onSquarePointerUp,
+  onSquarePointerDown,
+}) {
   return (
     <>
       <mesh position={[0, -FRAME_H / 2, 0]} receiveShadow castShadow>
@@ -31,6 +37,22 @@ export default function BoardBase({ getSquareColor, interactive = false, onSquar
                 ? (event) => {
                     event.stopPropagation();
                     onSquareClick(row, column);
+                  }
+                : undefined
+            }
+            onPointerDown={
+              interactive && onSquarePointerDown
+                ? (event) => {
+                    event.stopPropagation();
+                    onSquarePointerDown(row, column);
+                  }
+                : undefined
+            }
+            onPointerUp={
+              interactive && onSquarePointerUp
+                ? (event) => {
+                    event.stopPropagation();
+                    onSquarePointerUp(row, column);
                   }
                 : undefined
             }

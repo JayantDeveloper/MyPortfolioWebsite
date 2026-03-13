@@ -82,47 +82,74 @@ export default function About() {
         <div style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>
           <div
             style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1.45fr 1fr',
+              gap: isMobile ? '1.5rem' : '2rem',
+              alignItems: 'start',
+            }}
+          >
+            <div>
+              <div
+              style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              fontSize: isMobile ? '1.04rem' : '0.92rem',
               letterSpacing: '0.15em',
-              color: '#a8a8d0',
+              color: '#d7bc66',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
-            }}
-          >
-            Background
+                }}
+              >
+                Background
+              </div>
+              <h1
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 800,
+                  fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                  margin: '0 0 1.5rem 0',
+                  background: 'linear-gradient(135deg, #c8c8d4 0%, #f0f0f8 40%, #9090a8 60%, #e0e0ec 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  lineHeight: 1.1,
+                }}
+              >
+                About Me
+              </h1>
+              <p
+                style={{
+                  fontFamily: 'Outfit, sans-serif',
+                  fontSize: isMobile ? '0.96rem' : '1rem',
+                  color: '#bcbdcf',
+                  maxWidth: 620,
+                  lineHeight: 1.8,
+                  margin: 0,
+                }}
+              >
+                I'm a CS student at the University of Maryland (graduating May 2028) with a
+                minor in Computational Finance. I've been writing software since middle school — from
+                an iPhone app at JHU to ML pipelines at national labs. I like building things that are
+                fast, thoughtful, and occasionally weird. Outside of code I'm a chess expert
+                and a former Maryland State Champion.
+              </p>
+            </div>
+
+            <img
+              src="/jayheadhshot.jpeg"
+              alt="Jayant Maheshwari headshot"
+              style={{
+                width: isMobile ? 180 : 240,
+                height: isMobile ? 240 : 320,
+                borderRadius: '10px',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                border: '2px solid rgba(168,168,208,.42)',
+                boxShadow: '0 10px 34px rgba(4, 4, 4, 0.46), inset 0 0 0 2px rgba(0, 0, 0, 0.42)',
+                justifySelf: isMobile ? 'start' : 'center',
+                backgroundColor: '#0f0f11',
+              }}
+            />
           </div>
-          <h1
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 800,
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-              margin: '0 0 1.5rem 0',
-              background: 'linear-gradient(135deg, #c8c8d4 0%, #f0f0f8 40%, #9090a8 60%, #e0e0ec 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              lineHeight: 1.1,
-            }}
-          >
-            About Me
-          </h1>
-          <p
-            style={{
-              fontFamily: 'Outfit, sans-serif',
-              fontSize: isMobile ? '0.96rem' : '1rem',
-              color: '#bcbdcf',
-              maxWidth: 620,
-              lineHeight: 1.8,
-              margin: 0,
-            }}
-          >
-            I'm a CS student at the University of Maryland (graduating May 2028) with a
-            minor in Computational Finance. I've been writing software since middle school — from
-            an iPhone app at JHU to ML pipelines at national labs. I like building things that are
-            fast, thoughtful, and occasionally weird. Outside of code I'm a chess expert
-            and a former Maryland State Champion.
-          </p>
         </div>
 
         <div
@@ -148,7 +175,7 @@ export default function About() {
                 fontFamily: 'Outfit, sans-serif',
                 fontSize: isMobile ? '1.04rem' : '0.92rem',
                 letterSpacing: '0.15em',
-                color: '#b76e79', // Rose gold accent
+                color: '#d7bc66',
                 textTransform: 'uppercase',
                 marginBottom: '2rem',
               }}
@@ -161,18 +188,18 @@ export default function About() {
                   key={job.company + job.role}
                   style={{
                     background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
-                    border: '1px solid rgba(183, 110, 121, 0.1)',
+                    border: '1px solid rgba(168, 168, 208, 0.2)',
                     borderRadius: '12px',
                     padding: isMobile ? '1.35rem' : '1.85rem',
                     transition: 'transform 0.2s ease, border-color 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.3)';
+                    e.currentTarget.style.borderColor = 'rgba(144, 144, 184, 0.45)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(168, 168, 208, 0.2)';
                   }}
                 >
                   <div
@@ -217,7 +244,7 @@ export default function About() {
                             fontFamily: 'Inter, sans-serif',
                             fontWeight: 700,
                             fontSize: isMobile ? '1.02rem' : '1.08rem',
-                            color: '#f5d0c5', // Warm text color
+                            color: '#ececf4', // Warm text color
                           }}
                         >
                           {job.company}
@@ -278,7 +305,7 @@ export default function About() {
                   fontFamily: 'Outfit, sans-serif',
                   fontSize: isMobile ? '1.04rem' : '0.92rem',
                   letterSpacing: '0.15em',
-                  color: '#b76e79',
+                color: '#d7bc66',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
                 }}
@@ -287,15 +314,15 @@ export default function About() {
               </div>
               <div style={{ 
                 background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
-                border: '1px solid rgba(183, 110, 121, 0.1)', 
+                border: '1px solid rgba(168, 168, 208, 0.2)', 
                 borderRadius: '12px', 
                 padding: isMobile ? '1.35rem' : '1.85rem',
                 transition: 'border-color 0.2s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.3)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(183, 110, 121, 0.1)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(144, 144, 184, 0.45)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(168, 168, 208, 0.2)'; }}
               >
-                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: isMobile ? '1.02rem' : '1.08rem', color: '#f5d0c5' }}>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: isMobile ? '1.02rem' : '1.08rem', color: '#ececf4' }}>
                   University of Maryland
                 </div>
                 <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isMobile ? '0.86rem' : '0.9rem', color: '#c2c2df', marginTop: 8, lineHeight: 1.7 }}>
@@ -314,7 +341,7 @@ export default function About() {
                   fontFamily: 'Outfit, sans-serif',
                   fontSize: isMobile ? '1.04rem' : '0.92rem',
                   letterSpacing: '0.15em',
-                  color: '#b76e79',
+                  color: '#d7bc66',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
                 }}
@@ -328,7 +355,7 @@ export default function About() {
                       style={{
                         fontFamily: 'Outfit, sans-serif',
                         fontSize: isMobile ? '0.74rem' : '0.7rem',
-                        color: '#f5d0c5',
+                  color: '#f2f2f8',
                         letterSpacing: '0.1em',
                         marginBottom: '0.75rem',
                         textTransform: 'uppercase',
@@ -339,9 +366,9 @@ export default function About() {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                       {items.map((item) => (
                         <span key={item} style={{
-                          background: 'rgba(183, 110, 121, 0.08)',
-                          border: '1px solid rgba(183, 110, 121, 0.2)',
-                          color: '#f5d0c5',
+                          background: 'rgba(168, 168, 208, 0.1)',
+                          border: '1px solid rgba(168, 168, 208, 0.3)',
+                          color: '#f2f2f8',
                           fontFamily: 'Outfit, sans-serif',
                           fontSize: isMobile ? '0.82rem' : '0.8rem',
                           letterSpacing: '0.05em',
@@ -364,7 +391,7 @@ export default function About() {
                   fontFamily: 'Outfit, sans-serif',
                   fontSize: isMobile ? '1.04rem' : '0.92rem',
                   letterSpacing: '0.15em',
-                  color: '#b76e79',
+                color: '#d7bc66',
                   textTransform: 'uppercase',
                   marginBottom: '1.25rem',
                 }}
@@ -384,7 +411,7 @@ export default function About() {
                       position: 'relative',
                     }}
                   >
-                    <span style={{ position: 'absolute', left: 0, color: '#b76e79' }}>—</span>
+                    <span style={{ position: 'absolute', left: 0, color: '#9090b8' }}>—</span>
                     {a}
                   </li>
                 ))}

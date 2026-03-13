@@ -1,4 +1,7 @@
 const PIECE_VALUES = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 20000 };
+const BOT_BASE_DEPTH = 3;
+const BOT_ENDGAME_DEPTH = 4;
+const BOT_ENDGAME_PIECE_THRESHOLD = 14;
 
 const PIECE_SQUARE_TABLES = {
   P: [
@@ -99,7 +102,8 @@ function inBounds(row, column) {
   return row >= 0 && row < 8 && column >= 0 && column < 8;
 }
 
-function pseudoMoves(board, row, column, enPassant) {
+function pseudoMoves(board, row, column, enPassant, options = {}) {
+  const { includeOwnTargets = false } = options;
   const piece = board[row][column];
   if (!piece) return [];
 
@@ -111,7 +115,11 @@ function pseudoMoves(board, row, column, enPassant) {
   const addMove = (targetRow, targetColumn) => {
     if (!inBounds(targetRow, targetColumn)) return;
     const targetPiece = board[targetRow][targetColumn];
-    if (!targetPiece || pieceColor(targetPiece) === opponent) {
+    if (
+      !targetPiece ||
+      pieceColor(targetPiece) === opponent ||
+      (includeOwnTargets && targetPiece && pieceColor(targetPiece) === color)
+    ) {
       moves.push([targetRow, targetColumn]);
     }
   };
@@ -122,7 +130,7 @@ function pseudoMoves(board, row, column, enPassant) {
     while (inBounds(targetRow, targetColumn)) {
       const targetPiece = board[targetRow][targetColumn];
       if (targetPiece) {
-        if (pieceColor(targetPiece) === opponent) {
+        if (pieceColor(targetPiece) === opponent || (includeOwnTargets && pieceColor(targetPiece) === color)) {
           moves.push([targetRow, targetColumn]);
         }
         break;
@@ -150,7 +158,10 @@ function pseudoMoves(board, row, column, enPassant) {
       if (!inBounds(targetRow, targetColumn)) continue;
 
       const targetPiece = board[targetRow][targetColumn];
-      if (targetPiece && pieceColor(targetPiece) === opponent) {
+      if (
+        (targetPiece && pieceColor(targetPiece) === opponent) ||
+        (includeOwnTargets && targetPiece && pieceColor(targetPiece) === color)
+      ) {
         moves.push([targetRow, targetColumn]);
       }
       if (
@@ -342,6 +353,48 @@ export function getLegalMoves(board, from, castling, enPassant) {
   return legalMoves;
 }
 
+export function getPremoveLegalMoves(board, from, castling, enPassant) {
+  const piece = board[from[0]][from[1]];
+  if (!piece) return [];
+
+  const color = pieceColor(piece);
+  const legalMoves = pseudoMoves(board, from[0], from[1], enPassant, {
+    includeOwnTargets: true,
+  });
+
+  if (pieceType(piece) !== "K" || isInCheck(board, color)) {
+    return legalMoves;
+  }
+
+  const row = color === "w" ? 7 : 0;
+  if (from[0] !== row || from[1] !== 4) {
+    return legalMoves;
+  }
+
+  if (
+    (color === "w" ? castling.includes("K") : castling.includes("k")) &&
+    !board[row][5] &&
+    !board[row][6] &&
+    !isInCheck(applyMove(board, [row, 4], [row, 5]).board, color) &&
+    !isInCheck(applyMove(board, [row, 4], [row, 6]).board, color)
+  ) {
+    legalMoves.push([row, 6]);
+  }
+
+  if (
+    (color === "w" ? castling.includes("Q") : castling.includes("q")) &&
+    !board[row][3] &&
+    !board[row][2] &&
+    !board[row][1] &&
+    !isInCheck(applyMove(board, [row, 4], [row, 3]).board, color) &&
+    !isInCheck(applyMove(board, [row, 4], [row, 2]).board, color)
+  ) {
+    legalMoves.push([row, 2]);
+  }
+
+  return legalMoves;
+}
+
 export function hasAnyLegalMove(board, color, castling, enPassant) {
   for (let row = 0; row < 8; row += 1) {
     for (let column = 0; column < 8; column += 1) {
@@ -390,11 +443,28 @@ function getAllMoves(board, color, castling, enPassant) {
   return moves;
 }
 
+function scoreImmediateMove(board, move) {
+  const movingPiece = pieceType(board[move.from[0]][move.from[1]]);
+  const capturedPiece = board[move.to[0]][move.to[1]];
+  const capturedValue = capturedPiece ? PIECE_VALUES[pieceType(capturedPiece)] : 0;
+  const movingValue = movingPiece ? PIECE_VALUES[movingPiece] : 0;
+  return capturedValue * 100 - movingValue * 12 + (capturedValue || 0);
+}
+
+function orderedMoves(board, color, castling, enPassant, maximizing) {
+  const moves = getAllMoves(board, color, castling, enPassant);
+  return moves.sort((firstMove, secondMove) => {
+    const firstScore = scoreImmediateMove(board, firstMove);
+    const secondScore = scoreImmediateMove(board, secondMove);
+    return maximizing ? secondScore - firstScore : firstScore - secondScore;
+  });
+}
+
 function minimax(board, depth, alpha, beta, maximizing, castling, enPassant) {
   if (depth === 0) return evaluate(board);
 
   const color = maximizing ? "w" : "b";
-  const moves = getAllMoves(board, color, castling, enPassant);
+  const moves = orderedMoves(board, color, castling, enPassant, maximizing);
   if (!moves.length) {
     return isInCheck(board, color) ? (maximizing ? -99999 : 99999) : 0;
   }
@@ -434,19 +504,30 @@ function minimax(board, depth, alpha, beta, maximizing, castling, enPassant) {
   return bestValue;
 }
 
-export function getBotMove(board, color, castling, enPassant) {
+function pickWeightedByRank(candidates) {
+  if (!candidates.length) return null;
+  const totalWeight = candidates.reduce((sum, _, index) => sum + 1 / (index + 1), 0);
+  let draw = Math.random() * totalWeight;
+  for (let index = 0; index < candidates.length; index += 1) {
+    draw -= 1 / (index + 1);
+    if (draw <= 0) {
+      return candidates[index];
+    }
+  }
+  return candidates[0];
+}
+
+export function getBotMove(board, color, castling, enPassant, options = {}) {
+  const { moveNoise = 0 } = options;
   const moves = getAllMoves(board, color, castling, enPassant);
   if (!moves.length) return null;
 
-  for (let index = moves.length - 1; index > 0; index -= 1) {
-    const swapIndex = (Math.random() * index) | 0;
-    [moves[index], moves[swapIndex]] = [moves[swapIndex], moves[index]];
-  }
+  const moveCount = board.flat().filter(Boolean).length;
+  const searchDepth = moveCount <= BOT_ENDGAME_PIECE_THRESHOLD ? BOT_ENDGAME_DEPTH : BOT_BASE_DEPTH;
+  const orderedTopMoves = orderedMoves(board, color, castling, enPassant, color !== "b");
+  const scoredMoves = [];
 
-  let bestValue = color === "b" ? Infinity : -Infinity;
-  let bestMove = moves[0];
-
-  for (const move of moves) {
+  for (const move of orderedTopMoves) {
     const { board: nextBoard, enPassant: nextEnPassant } = applyMove(
       board,
       move.from,
@@ -454,15 +535,48 @@ export function getBotMove(board, color, castling, enPassant) {
     );
     const value = minimax(
       nextBoard,
-      2,
+      searchDepth - 1,
       -Infinity,
       Infinity,
       color === "b",
       castling,
       nextEnPassant,
     );
-    if ((color === "b" && value < bestValue) || (color === "w" && value > bestValue)) {
-      bestValue = value;
+    scoredMoves.push({ move, value });
+  }
+
+  const maximizing = color === "w";
+  const sortedMoves = scoredMoves.sort((first, second) =>
+    maximizing ? second.value - first.value : first.value - second.value,
+  );
+  const bestValue = sortedMoves[0].value;
+
+  const OPENING_PIECE_THRESHOLD = 28;
+  const OPENING_VALUE_SPREAD = 65;
+  const OPENING_POOL_LIMIT = 6;
+  if (moveCount >= OPENING_PIECE_THRESHOLD) {
+    const openingCandidates = sortedMoves.filter(({ value }) =>
+      maximizing ? value >= bestValue - OPENING_VALUE_SPREAD : value <= bestValue + OPENING_VALUE_SPREAD,
+    );
+    const candidatePool = (openingCandidates.length ? openingCandidates : sortedMoves).slice(
+      0,
+      OPENING_POOL_LIMIT,
+    );
+    const chosen = pickWeightedByRank(candidatePool);
+    if (chosen) {
+      return chosen.move;
+    }
+  }
+
+  let bestNoisy = maximizing ? -Infinity : Infinity;
+  let bestMove = sortedMoves[0].move;
+  for (const { move, value } of sortedMoves) {
+    const noisyValue = value + (Math.random() - 0.5) * moveNoise;
+    if (
+      (maximizing && noisyValue > bestNoisy) ||
+      (!maximizing && noisyValue < bestNoisy)
+    ) {
+      bestNoisy = noisyValue;
       bestMove = move;
     }
   }

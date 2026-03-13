@@ -22,9 +22,9 @@ export default function Projects() {
           <div
             style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: isMobile ? '0.74rem' : '0.66rem',
+              fontSize: isMobile ? '1.04rem' : '0.92rem',
               letterSpacing: '0.15em',
-              color: '#a8a8d0',
+              color: '#e95f59',
               textTransform: 'uppercase',
               marginBottom: '0.5rem',
             }}
