@@ -1,5 +1,23 @@
 export const projects = [
   {
+    id: 'owlsight',
+    name: 'OwlSight',
+    tagline: 'AI execution copilot for cross-chain trading',
+    description:
+      'OWLSight simulates thousands of cross-chain execution paths before a trade is submitted, scoring routes by confidence, fees, slippage, and bridge latency so traders can see whether the edge actually survives.',
+    longDescription: `OWLSight is an AI-powered execution copilot built on top of Hummingbot for cross-chain trading. A user can describe a trade in plain language, such as swapping ETH to SOL, and the system translates that intent into structured trade parameters, identifies candidate routes, and runs Monte Carlo simulation across thousands of execution scenarios before anything is handed off for execution.\n\nThe core product is a route intelligence layer: every candidate path is ranked by expected outcome, confidence score, fees, slippage, and latency. Approved routes are sent to Hummingbot's paper-trade engine with a full timestamped execution timeline. Rejected routes surface the exact reason the edge failed, including fee drag, slippage, or bridge delay. Every run is persisted to a dashboard with execution history, filtering, CSV export, and a reusable simulation library.\n\nA large part of the build was making the system resilient. Different Hummingbot builds exposed different endpoint paths, so OwlSight uses a multi-candidate fallback chain and logs precisely why each attempt failed. On the frontend, wallet detection had to account for MetaMask's async injection timing to avoid false "no wallet detected" flashes. The result is a hackathon project that feels closer to institutional execution tooling than a typical trading demo.`,
+    tags: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'FastAPI', 'Python', 'Prisma', 'LibSQL', 'NextAuth', 'Hummingbot', 'wagmi'],
+    links: [
+      { label: 'Live Site', url: 'https://www.owlsight.vip' },
+      { label: 'GitHub', url: 'https://github.com/JayantDeveloper/osfix' },
+    ],
+    logo: '/projectlogos/owlsight.jpg',
+    thumbnail: 'https://www.owlsight.vip',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fwww.owlsight.vip&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'HooHacks 2026',
+    color: '#38bdf8',
+  },
+  {
     id: 'codekiwi',
     name: 'CodeKiwi',
     tagline: 'Live coding classroom platform for Google Slides',
