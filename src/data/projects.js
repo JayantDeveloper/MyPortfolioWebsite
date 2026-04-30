@@ -1,5 +1,41 @@
 export const projects = [
   {
+    id: 'forecast',
+    name: 'Forecast',
+    tagline: 'Real-time UMD campus opportunity map & ranked event feed',
+    description:
+      'Forecast aggregates campus events, deadlines, and opportunities from TerpLink, Discord, Gmail, and the CS department — then ranks them by semantic relevance to your interests on a live map and priority feed.',
+    longDescription: `Forecast is a campus intelligence app built for UMD students. It pulls events, deadlines, and opportunities from four sources — TerpLink (scraped), a Discord bot, Gmail OAuth sync, and the UMD CS department RSS feed — and surfaces them in two views: a full-screen map with a day-range slider and a priority-ranked feed with countdown timers.\n\nRanking runs on two parallel systems. On the server, a Gemini text embedding of each event is compared to the user's interest profile using cosine similarity via Vertex AI, producing a semantic score (threshold 0.62). On the client, saved keywords are matched against event titles, locations, and categories with source and urgency multipliers. The final score is the max of the two — neither system can suppress the other.\n\nThe backend is FastAPI + SQLite with a Discord bot and Gmail background sync loop running as async workers. The mobile app is React Native (Expo SDK 54) with Google Sign-In, Google Calendar integration, and offline-first caching. Campus buildings are geocoded from a curated JSON map to lat/lng for the map view.`,
+    tags: ['React Native', 'Expo', 'FastAPI', 'Python', 'Gemini', 'Vertex AI', 'SQLite', 'Discord.py', 'Google OAuth'],
+    links: [
+      { label: 'Commercial Site', url: 'https://forecast-commercial-site.vercel.app' },
+      { label: 'GitHub', url: 'https://github.com/JayantDeveloper/Forecast' },
+    ],
+    logo: '/projectlogos/forecast.png',
+    thumbnail: 'https://forecast-commercial-site.vercel.app',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fforecast-commercial-site.vercel.app&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Bitcamp 2026 (UMD)',
+    color: '#38bdf8',
+  },
+  {
+    id: 'umdcourseplanner',
+    name: 'UMD Course Planner',
+    tagline: 'AI-powered semester planner for UMD students',
+    description:
+      'Import your Testudo transcript and get AI-ranked course recommendations — major requirements mapped, gen-eds tracked, and the best professor for each suggestion surfaced with grades and ratings.',
+    longDescription: `UMD Course Planner is a personalized semester planning tool for University of Maryland students. Import your unofficial transcript directly from Testudo (via Playwright automation) or paste it manually — the app auto-detects your major, minor, and all completed courses including in-progress ones.\n\nThe recommendation engine fetches every course offered next semester across all departments in your requirements, filters by completed prerequisites using a custom AND/OR parser, and sends the full pool to an LLM (Groq llama-3.3-70b) with your major/minor requirements, gen-ed gaps, and interests. It returns 5–8 prioritized courses with reasons and requirement tags.\n\nFor each recommended course, the app queries PlanetTerp and umd.io to find every section being offered, ranks professors by a composite score (60% rating + 40% GPA from grade history), and surfaces the best instructor with a full grade distribution bar. Professors can also be compared side-by-side with AI prep summaries generated from real student reviews.\n\nThe backend uses an in-memory TTL cache for all external API calls and AI results, keeping repeat requests instant. The frontend tracks gen-ed fulfillment, requirement progress bars, credit counters, and filter pills — all persisted to localStorage.`,
+    tags: ['React', 'Vite', 'Flask', 'Python', 'Groq', 'Playwright', 'PlanetTerp API', 'umd.io API'],
+    links: [
+      { label: 'Live Site', url: 'https://umd-course-planner.vercel.app' },
+      { label: 'GitHub', url: 'https://github.com/JayantDeveloper/UMDCoursePlanner' },
+    ],
+    logo: '/projectlogos/umdcourseplanner.webp',
+    thumbnail: 'https://umd-course-planner.vercel.app',
+    thumbnailImg: `https://api.microlink.io/?url=https%3A%2F%2Fumd-course-planner.vercel.app&screenshot=true&meta=false&embed=screenshot.url`,
+    origin: 'Personal Project',
+    color: '#FA5C5C',
+  },
+  {
     id: 'owlsight',
     name: 'OwlSight',
     tagline: 'AI execution copilot for cross-chain trading',
