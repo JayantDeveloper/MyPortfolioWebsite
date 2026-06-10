@@ -1,14 +1,38 @@
+import { motion } from 'framer-motion';
 import useResponsive from '../hooks/useResponsive';
 
+const research = [
+  {
+    company: 'University of Maryland',
+    iconUrl: '/experiencelogos/umd_logo.png',
+    role: 'Research Assistant · Prof. Serhiy Kozak',
+    period: 'Mar 2026 – Present',
+    bullets: [
+      'Benchmarking OCR and document-parsing tools (Marker, Docling, MinerU, Chandra/vLLM) on historical Wall Street Journal scans to build a structured alternative-data corpus for equity factor research.',
+      'Built a GPU-accelerated Python evaluation harness (RTX 4090, Tesla V100 32GB) with normalized edit-distance metrics, plus an extraction pipeline for historical financial news at scale.',
+    ],
+  },
+];
+
 const experience = [
+  {
+    company: 'Matchii',
+    iconUrl: '/experiencelogos/matchii_logo.svg',
+    role: 'Founding Engineer',
+    period: 'Feb 2026 – Present',
+    bullets: [
+      'Built the GTM automation engine: a 5-agent LangGraph pipeline with ICP scoring, human approval gates, and Prospeo, Snov.io, Attio, and HeyReach integrations.',
+      'Designed and shipped the Next.js marketing site from Figma, wiring Ashby job listings and an Attio-backed agency intake form.',
+    ],
+  },
   {
     company: 'Booz Allen Hamilton',
     iconUrl: '/experiencelogos/booz_allen_hamilton_logo.jpeg',
     role: 'Machine Learning Engineer (Contract)',
-    period: 'Feb 2026 – Present',
+    period: 'Feb 2026 – May 2026',
     bullets: [
-      'Building a vision + OCR pipeline to analyze eligibility-system screen recordings and auto-extract relevant screenshots for case documentation.',
-      'Implementing frame sampling, screen classification, and trigger detection to generate structured outputs for Word/PDF export.',
+      'Built a vision + OCR pipeline to analyze eligibility-system screen recordings and auto-extract relevant screenshots for case documentation.',
+      'Implemented frame sampling, screen classification, and trigger detection to generate structured outputs for Word/PDF export.',
     ],
   },
   {
@@ -54,8 +78,8 @@ const experience = [
 
 const skills = {
   Languages: ['Python', 'TypeScript', 'JavaScript', 'Java', 'C', 'OCaml', 'Swift', 'R'],
-  'Frameworks & Libraries': ['React', 'Next.js', 'Node.js', 'Express', 'PyTorch', 'scikit-learn', 'XGBoost'],
-  'Databases & Infra': ['MongoDB', 'Neo4j', 'SQL', 'Typesense', 'Docker', 'Render', 'Vercel', 'Git'],
+  'Frameworks & Libraries': ['React', 'Next.js', 'Node.js', 'Express', 'FastAPI', 'LangGraph', 'PyTorch', 'scikit-learn', 'XGBoost', 'pandas'],
+  'Databases & Infra': ['MongoDB', 'Neo4j', 'SQL', 'Pinecone', 'Typesense', 'Docker', 'Render', 'Vercel', 'Git'],
 };
 
 const awards = [
@@ -65,6 +89,134 @@ const awards = [
   'Tied 3rd Place, National K–12 Showdown (~2,800 participants)',
   '2nd Place, MD Sweet 16 Invitational (2023)',
 ];
+
+// Shared motion variants for scroll-triggered staggered reveals.
+const listContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
+const cardItem = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+};
+const blockReveal = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const sectionLabelStyle = (isMobile) => ({
+  fontFamily: 'Outfit, sans-serif',
+  fontSize: isMobile ? '1.04rem' : '0.92rem',
+  letterSpacing: '0.15em',
+  color: '#d7bc66',
+  textTransform: 'uppercase',
+  marginBottom: '2rem',
+});
+
+function RoleCard({ job, isMobile }) {
+  return (
+    <motion.div
+      variants={cardItem}
+      whileHover={{ y: -2, borderColor: 'rgba(144, 144, 184, 0.45)' }}
+      style={{
+        background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
+        border: '1px solid rgba(168, 168, 208, 0.2)',
+        borderRadius: '12px',
+        padding: isMobile ? '1.35rem' : '1.85rem',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: '1rem',
+          gap: isMobile ? '0.9rem' : '0.5rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            alignItems: isMobile ? 'flex-start' : 'center',
+          }}
+        >
+          <div style={{
+            width: isMobile ? 40 : 44,
+            height: isMobile ? 40 : 44,
+            borderRadius: '8px',
+            background: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            overflow: 'hidden',
+            padding: '4px'
+          }}>
+            <img
+              src={job.iconUrl}
+              alt={`${job.company} logo`}
+              onError={(e) => { e.target.style.display = 'none'; }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700,
+                fontSize: isMobile ? '1.02rem' : '1.08rem',
+                color: '#ececf4',
+              }}
+            >
+              {job.company}
+            </div>
+            <div
+              style={{
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: isMobile ? '0.86rem' : '0.88rem',
+                color: '#b0b0d8',
+                marginTop: 4,
+              }}
+            >
+              {job.role}
+            </div>
+          </div>
+        </div>
+        <span
+          style={{
+            fontFamily: 'Outfit, sans-serif',
+            fontSize: isMobile ? '0.74rem' : '0.74rem',
+            color: '#888898',
+            whiteSpace: 'nowrap',
+            background: 'rgba(255,255,255,0.03)',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            border: '1px solid rgba(255,255,255,0.05)'
+          }}
+        >
+          {job.period}
+        </span>
+      </div>
+      <ul style={{ margin: '0', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {job.bullets.map((b, i) => (
+          <li
+            key={i}
+            style={{
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: isMobile ? '0.86rem' : '0.9rem',
+              color: '#bcbdcf',
+              lineHeight: 1.7,
+            }}
+          >
+            {b}
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+  );
+}
 
 export default function About() {
   const { isMobile, isTablet } = useResponsive();
@@ -79,7 +231,12 @@ export default function About() {
         }}
       >
         {/* Header */}
-        <div style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}
+        >
           <div
             style={{
               display: 'grid',
@@ -127,10 +284,11 @@ export default function About() {
                 }}
               >
                 I'm a CS student at the University of Maryland (graduating May 2028) with a
-                minor in Computational Finance. I've been writing software since middle school — from
-                an iPhone app at JHU to ML pipelines at national labs. I like building things that are
-                fast, thoughtful, and occasionally weird. Outside of code I'm a chess expert
-                and a former Maryland State Champion.
+                minor in Computational Finance. I've been writing software since middle school, from
+                an iPhone app at JHU to ML pipelines at national labs. These days I'm a founding engineer
+                at Matchii and a research assistant building alternative-data pipelines for quantitative
+                finance. I like building things that are fast, thoughtful, and occasionally weird. Outside
+                of code I'm a chess expert and a former Maryland State Champion.
               </p>
             </div>
 
@@ -150,7 +308,7 @@ export default function About() {
               }}
             />
           </div>
-        </div>
+        </motion.div>
 
         <div
           style={{
@@ -168,138 +326,50 @@ export default function About() {
           }}
         >
 
-          {/* Experience */}
-          <div>
-            <div
-              style={{
-                fontFamily: 'Outfit, sans-serif',
-                fontSize: isMobile ? '1.04rem' : '0.92rem',
-                letterSpacing: '0.15em',
-                color: '#d7bc66',
-                textTransform: 'uppercase',
-                marginBottom: '2rem',
-              }}
-            >
-              Experience
+          {/* Left column: Research + Experience */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '2.5rem' : '3.5rem' }}>
+            {/* Research */}
+            <div>
+              <div style={sectionLabelStyle(isMobile)}>Research</div>
+              <motion.div
+                variants={listContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.15 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+              >
+                {research.map((job) => (
+                  <RoleCard key={job.company + job.role} job={job} isMobile={isMobile} />
+                ))}
+              </motion.div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {experience.map((job) => (
-                <div 
-                  key={job.company + job.role}
-                  style={{
-                    background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
-                    border: '1px solid rgba(168, 168, 208, 0.2)',
-                    borderRadius: '12px',
-                    padding: isMobile ? '1.35rem' : '1.85rem',
-                    transition: 'transform 0.2s ease, border-color 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.borderColor = 'rgba(144, 144, 184, 0.45)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = 'rgba(168, 168, 208, 0.2)';
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: isMobile ? 'column' : 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '1rem',
-                      gap: isMobile ? '0.9rem' : '0.5rem',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '1rem',
-                        alignItems: isMobile ? 'flex-start' : 'center',
-                      }}
-                    >
-                      <div style={{
-                        width: isMobile ? 40 : 44,
-                        height: isMobile ? 40 : 44,
-                        borderRadius: '8px',
-                        background: '#ffffff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                        overflow: 'hidden',
-                        padding: '4px'
-                      }}>
-                        <img 
-                          src={job.iconUrl} 
-                          alt={`${job.company} logo`} 
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                          style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
-                        />
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontFamily: 'Inter, sans-serif',
-                            fontWeight: 700,
-                            fontSize: isMobile ? '1.02rem' : '1.08rem',
-                            color: '#ececf4', // Warm text color
-                          }}
-                        >
-                          {job.company}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: 'Outfit, sans-serif',
-                            fontSize: isMobile ? '0.86rem' : '0.88rem',
-                            color: '#b0b0d8',
-                            marginTop: 4,
-                          }}
-                        >
-                          {job.role}
-                        </div>
-                      </div>
-                    </div>
-                    <span
-                      style={{
-                        fontFamily: 'Outfit, sans-serif',
-                        fontSize: isMobile ? '0.74rem' : '0.74rem',
-                        color: '#888898',
-                        whiteSpace: 'nowrap',
-                        background: 'rgba(255,255,255,0.03)',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        border: '1px solid rgba(255,255,255,0.05)'
-                      }}
-                    >
-                      {job.period}
-                    </span>
-                  </div>
-                  <ul style={{ margin: '0', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {job.bullets.map((b, i) => (
-                      <li
-                        key={i}
-                        style={{
-                          fontFamily: 'Outfit, sans-serif',
-                          fontSize: isMobile ? '0.86rem' : '0.9rem',
-                          color: '#bcbdcf',
-                          lineHeight: 1.7,
-                        }}
-                      >
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+
+            {/* Experience */}
+            <div>
+              <div style={sectionLabelStyle(isMobile)}>Experience</div>
+              <motion.div
+                variants={listContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.1 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+              >
+                {experience.map((job) => (
+                  <RoleCard key={job.company + job.role} job={job} isMobile={isMobile} />
+                ))}
+              </motion.div>
             </div>
           </div>
 
-          {/* Right column: Skills + Education + Awards */}
+          {/* Right column: Education + Skills + Awards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
             {/* Education */}
-            <div>
+            <motion.div
+              variants={blockReveal}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+            >
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
@@ -312,15 +382,14 @@ export default function About() {
               >
                 Education
               </div>
-              <div style={{ 
+              <motion.div
+                whileHover={{ borderColor: 'rgba(144, 144, 184, 0.45)' }}
+                style={{
                 background: 'linear-gradient(145deg, rgba(30, 20, 22, 0.4) 0%, rgba(17, 17, 19, 0) 100%)',
-                border: '1px solid rgba(168, 168, 208, 0.2)', 
-                borderRadius: '12px', 
+                border: '1px solid rgba(168, 168, 208, 0.2)',
+                borderRadius: '12px',
                 padding: isMobile ? '1.35rem' : '1.85rem',
-                transition: 'border-color 0.2s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(144, 144, 184, 0.45)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(168, 168, 208, 0.2)'; }}
               >
                 <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: isMobile ? '1.02rem' : '1.08rem', color: '#ececf4' }}>
                   University of Maryland
@@ -331,11 +400,16 @@ export default function About() {
                 <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isMobile ? '0.72rem' : '0.65rem', color: '#888898', marginTop: 8, background: 'rgba(255,255,255,0.03)', padding: '4px 8px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.05)', display: 'inline-block' }}>
                   May 2028
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Skills */}
-            <div>
+            <motion.div
+              variants={blockReveal}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+            >
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
@@ -382,10 +456,15 @@ export default function About() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Awards */}
-            <div>
+            <motion.div
+              variants={blockReveal}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.3 }}
+            >
               <div
                 style={{
                   fontFamily: 'Outfit, sans-serif',
@@ -416,7 +495,7 @@ export default function About() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
