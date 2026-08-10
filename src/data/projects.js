@@ -59,10 +59,11 @@ export const projects = [
     tagline: 'Live coding classroom platform for Google Slides',
     description:
       'CodeKiwi turns Google Slides presentations into interactive coding lessons. Teachers control slides normally while students get a synchronized Monaco code editor with live execution — think Peardeck, but built for programmers.',
-    longDescription: `CodeKiwi is a platform designed for teaching programming in real classrooms using Google Slides. Teachers control slides through their existing Google Slides workflow, while students join a session and see synchronized slides alongside a live Monaco-based code editor.\n\nStudents can write, run, and iterate on code directly during a lecture. Code executes inside isolated Docker containers, and results stream back to the browser terminal in real time. Teachers get a dashboard to monitor student code, inspect submissions, and track progress.\n\nA Google Apps Script Add-on lets teachers export slides as PDFs, upload them to the backend, and start teaching sessions without leaving Google Slides. CodeKiwi is currently being prepared for Google Workspace Marketplace publication.`,
-    tags: ['React', 'TypeScript', 'WebSockets', 'Docker', 'Node.js', 'Monaco Editor'],
+    longDescription: `CodeKiwi is a platform designed for teaching programming in real classrooms using Google Slides. Teachers control slides through their existing Google Slides workflow, while students join a session and see synchronized slides alongside a live Monaco-based code editor.\n\nStudents can write, run, and iterate on code directly during a lecture. Code executes inside isolated Firecracker micro-VMs on Fly.io, sandboxed with strict resource limits, and results stream back to the browser terminal in real time. Teachers get a dashboard to monitor student code, inspect submissions, and track progress.\n\nA Google Apps Script Add-on lets teachers export slides as PDFs, upload them to the backend, and start teaching sessions without leaving Google Slides. CodeKiwi is now published and available on the Google Workspace Marketplace.`,
+    tags: ['React', 'TypeScript', 'WebSockets', 'Fly.io', 'Node.js', 'Monaco Editor'],
     links: [
       { label: 'Live Site', url: 'https://codekiwi.tech' },
+      { label: 'Marketplace', url: 'https://workspace.google.com/marketplace/app/codekiwi/66127405192' },
       { label: 'GitHub', url: 'https://github.com/JayantDeveloper/codekiwi-site' },
     ],
     logo: '/projectlogos/codekiwi.png',
